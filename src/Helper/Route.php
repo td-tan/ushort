@@ -7,6 +7,7 @@ require('RequestData.php');
 class Route
 {
 
+    // TODO Fix / mapping to controller not working
     public static function Get(string $route, string $controller) : bool
     {
         if($_SERVER['REQUEST_METHOD'] !== 'GET')

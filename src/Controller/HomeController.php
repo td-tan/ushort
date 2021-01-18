@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use Helper\RequestData;
+
 class HomeController
 {
-    public function index()
+    public function index(RequestData $rd)
     {
         echo "HOME";
+        var_dump($rd);
     }
 }
