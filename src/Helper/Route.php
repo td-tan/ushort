@@ -2,8 +2,11 @@
 
 namespace Helper;
 
+require('RequestData.php');
+
 class Route
 {
+
     public static function Get(string $route, string $controller) : bool
     {
         if($_SERVER['REQUEST_METHOD'] !== 'GET')
@@ -49,7 +52,7 @@ class Route
 
         require_once(__DIR__."/../Controller/$ctrlName.php");
 
-        call_user_func_array([$ctrlObj, $actionName], []);
+        call_user_func_array([$ctrlObj, $actionName], [new RequestData($_GET, $_POST, $_SESSION, $_COOKIE)]);
         return true;
     }
 }
