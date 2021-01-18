@@ -22,6 +22,24 @@ class Route
         return True;
     }
 
+    public static function loadController(string $controller)
+    {
+        // Get Controllers for mapping to action name
+        $ctrl = explode('@', $controller);
+        $ctrlName = $ctrl[0];
+        $actionName = $ctrl[1];
+
+        $ctrlObj = new $ctrlName;
+
+        $namespace = explode('\\', $ctrlName);
+        $ctrlName = end($namespace);
+
+
+        require_once(__DIR__."/../Controller/$ctrlName.php");
+
+        call_user_func_array([$ctrlObj, $actionName], [new RequestData($_GET, $_POST, $_SESSION, $_COOKIE)]);
+    }
+
     // TODO Fix / mapping to controller not working
     public static function Get(string $route, string $controller) : bool
     {
@@ -62,20 +80,9 @@ class Route
         }
         */
 
-        // Get Controllers for mapping to action name
-        $ctrl = explode('@', $controller);
-        $ctrlName = $ctrl[0];
-        $actionName = $ctrl[1];
+        self::loadController($controller);
 
-        $ctrlObj = new $ctrlName;
-
-        $namespace = explode('\\', $ctrlName);
-        $ctrlName = end($namespace);
-
-
-        require_once(__DIR__."/../Controller/$ctrlName.php");
-
-        call_user_func_array([$ctrlObj, $actionName], [new RequestData($_GET, $_POST, $_SESSION, $_COOKIE)]);
+        
         return true;
     }
 }
