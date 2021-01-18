@@ -4,11 +4,11 @@ namespace Helper;
 
 class Route
 {
-    public static function Get(string $route, string $controller)
+    public static function Get(string $route, string $controller) : bool
     {
         if($_SERVER['REQUEST_METHOD'] !== 'GET')
         {
-            return;
+            return false;
         }
 
         $url = parse_url($_SERVER['REQUEST_URI']);
@@ -18,7 +18,7 @@ class Route
 
         if(substr_count($path, '/') !== $levels)
         {
-            return;
+            return false;
         }
 
         $route_parts = array_filter(explode('/', $route), 'trim');
@@ -26,13 +26,13 @@ class Route
 
         if (empty($route_parts) || empty($url_parts) || count($route_parts) !== count($url_parts))
         {
-            return;
+            return false;
         }
 
         foreach ($route_parts as $index => $part) {
             if(!preg_match("/$part/", $url_parts[$index]))
             {
-                return;
+                return false;
             }
         }
 
@@ -50,5 +50,6 @@ class Route
         require_once(__DIR__."/../Controller/$ctrlName.php");
 
         call_user_func_array([$ctrlObj, $actionName], []);
+        return true;
     }
 }
