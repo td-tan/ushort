@@ -6,15 +6,36 @@ require('RequestData.php');
 
 class Route
 {
+    public static function match(string $route, string $url) : bool
+    {
+        $url = parse_url($_SERVER['REQUEST_URI']);
+        $path = $url['path'];
+
+        // Convert route into pattern
+        $pattern = str_replace('/', '\/', $route);
+        var_dump($pattern);
+        if (!preg_match("/^$pattern$/", $path))
+        {
+            return False;
+        }
+        var_dump($path);
+        return True;
+    }
 
     // TODO Fix / mapping to controller not working
     public static function Get(string $route, string $controller) : bool
     {
         if($_SERVER['REQUEST_METHOD'] !== 'GET')
         {
-            return false;
+            return False;
         }
 
+        if (!self::match($route, $_SERVER['REQUEST_URI']))
+        {
+            return False;
+        }
+
+        /*
         $url = parse_url($_SERVER['REQUEST_URI']);
         $path = $url['path'];
 
@@ -39,6 +60,7 @@ class Route
                 return false;
             }
         }
+        */
 
         // Get Controllers for mapping to action name
         $ctrl = explode('@', $controller);
