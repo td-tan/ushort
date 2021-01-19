@@ -4,12 +4,12 @@ namespace Helper;
 
 class RequestData
 {
-    public array $get;
-    public array $post;
+    public array $query;
+    public array $data;
 
-    public function __construct(array $get = [], array $post = [])
+    public function __construct(array $query = [], array $data = [])
     {
-        $this->get = $get;
-        $this->post = $post;
+        $this->query = $query;
+        $this->data = $data;
     }
 }
