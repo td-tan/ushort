@@ -32,7 +32,7 @@ class Route
         {
             return False;
         }
-        return $matches;
+        return array($param => $matches[$param]); // We only want Get parameter
     }
 
     public static function loadController(string $controller, RequestData $rd) : void
@@ -100,7 +100,26 @@ class Route
         return true;
     }
 
-    //TODO Implement Post path mapping to route
+    public static function Post(string $route, string $controller)
+    {
+        if($_SERVER['REQUEST_METHOD'] !== 'POST')
+        {
+            return False;
+        }
+
+        $query = self::match(self::$route.$route, $_SERVER['REQUEST_URI']);
+        if($query === False || $query === null)
+        {
+            return False;
+        }
+
+        self::loadController($controller, new RequestData($query, $_POST));
+
+        
+        return true;
+    }
+
+    // TODO Implement all HTTP METHOD
 
     public static function Group(string $top_route, $callback)
     {
