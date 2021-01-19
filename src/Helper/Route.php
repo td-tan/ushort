@@ -4,25 +4,35 @@ namespace Helper;
 
 require('RequestData.php');
 
+// TODO Implement ErrorController
+// TODO Better route matching: \{(\w+)=(alpha)?\|?(digit)?\}
 class Route
 {
-    public static function match(string $route, string $url) : bool
+    public static function match(string $route, string $url)
     {
         $url = parse_url($_SERVER['REQUEST_URI']);
         $path = $url['path'];
 
+        $param_rule = "/\{(?'param'\w+)(?'rules'=\w+?\|?\w+)?\}/";
+
+        // Convert parameter rule into pattern
+        if(preg_match($param_rule, $route, $matches, PREG_OFFSET_CAPTURE))
+        {
+            $param = $matches['param'][0];
+            $offset = $matches['param'][1]-1;
+            $route = substr_replace($route, "(?'$param'[a-zA-Z0-9]+)", $offset);
+        }
+
         // Convert route into pattern
         $pattern = str_replace('/', '\/', $route);
-        var_dump($pattern);
-        if (!preg_match("/^$pattern$/", $path))
+        if (!preg_match("/^$pattern$/", $path, $matches))
         {
             return False;
         }
-        var_dump($path);
-        return True;
+        return $matches;
     }
 
-    public static function loadController(string $controller)
+    public static function loadController(string $controller, RequestData $rd) : void
     {
         // Get Controllers for mapping to action name
         $ctrl = explode('@', $controller);
@@ -31,13 +41,14 @@ class Route
 
         $ctrlObj = new $ctrlName;
 
+        // Remove namespace from Controller Name
         $namespace = explode('\\', $ctrlName);
         $ctrlName = end($namespace);
 
 
         require_once(__DIR__."/../Controller/$ctrlName.php");
 
-        call_user_func_array([$ctrlObj, $actionName], [new RequestData($_GET, $_POST, $_SESSION, $_COOKIE)]);
+        call_user_func_array([$ctrlObj, $actionName], [$rd]);
     }
 
     // TODO Fix / mapping to controller not working
@@ -48,7 +59,8 @@ class Route
             return False;
         }
 
-        if (!self::match($route, $_SERVER['REQUEST_URI']))
+        $query = self::match($route, $_SERVER['REQUEST_URI']);
+        if($query === False)
         {
             return False;
         }
@@ -80,7 +92,7 @@ class Route
         }
         */
 
-        self::loadController($controller);
+        self::loadController($controller, new RequestData($query));
 
         
         return true;

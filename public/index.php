@@ -13,4 +13,4 @@ use Helper\Route;
 // TODO Implement url redirection
 
 Route::Get('/', HomeController::class.'@index');
-Route::Get('/test/[a-zA-Z0-9]{4,128}', HomeController::class.'@index');
+Route::Get('/test/{id}', HomeController::class.'@index');
