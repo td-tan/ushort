@@ -8,6 +8,9 @@ require('RequestData.php');
 // TODO Better route matching: \{(\w+)=(alpha)?\|?(digit)?\}
 class Route
 {
+
+    static string $route = "";
+
     public static function match(string $route, string $url)
     {
         $url = parse_url($_SERVER['REQUEST_URI']);
@@ -50,8 +53,7 @@ class Route
 
         call_user_func_array([$ctrlObj, $actionName], [$rd]);
     }
-
-    // TODO Fix / mapping to controller not working
+    
     public static function Get(string $route, string $controller) : bool
     {
         if($_SERVER['REQUEST_METHOD'] !== 'GET')
@@ -59,7 +61,7 @@ class Route
             return False;
         }
 
-        $query = self::match($route, $_SERVER['REQUEST_URI']);
+        $query = self::match(self::$route.$route, $_SERVER['REQUEST_URI']);
         if($query === False)
         {
             return False;
@@ -96,5 +98,15 @@ class Route
 
         
         return true;
+    }
+
+    //TODO Implement Post path mapping to route
+
+    public static function Group(string $top_route, $callback)
+    {
+        self::$route = $top_route;
+        call_user_func($callback);
+        // Reset out of scope
+        self::$route = "";
     }
 }
