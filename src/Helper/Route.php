@@ -11,7 +11,7 @@ class Route
 
     static string $route = "";
 
-    public static function match(string $route, string $url)
+    public static function match(string $route, string $url) : array
     {
         $url = parse_url($_SERVER['REQUEST_URI']);
         $path = $url['path'];
@@ -30,7 +30,7 @@ class Route
         $pattern = str_replace('/', '\/', $route);
         if (!preg_match("/^$pattern$/", $path, $matches))
         {
-            return False;
+            return [];
         }
         return array($param => $matches[$param]); // We only want Get parameter
     }
@@ -53,62 +53,41 @@ class Route
 
         call_user_func_array([$ctrlObj, $actionName], [$rd]);
     }
-    
-    public static function Get(string $route, string $controller) : bool
+
+    public static function mapping(string $verb, string $route)
     {
-        if($_SERVER['REQUEST_METHOD'] !== 'GET')
+        if($_SERVER['REQUEST_METHOD'] !== $verb)
         {
             return False;
         }
 
         $query = self::match(self::$route.$route, $_SERVER['REQUEST_URI']);
-        if($query === False)
+        if(empty($query))
         {
             return False;
         }
+        return $query;
+    }    
 
-        /*
-        $url = parse_url($_SERVER['REQUEST_URI']);
-        $path = $url['path'];
+    public static function Get(string $route, string $controller) : bool
+    {
+        $query = self::mapping('GET', $route);
 
-        $levels = substr_count($route, '/');
-
-        if(substr_count($path, '/') !== $levels)
+        if($query === False) 
         {
-            return false;
+            return False;
         }
-
-        $route_parts = array_filter(explode('/', $route), 'trim');
-        $url_parts = array_filter(explode('/', $path), 'trim');
-
-        if (empty($route_parts) || empty($url_parts) || count($route_parts) !== count($url_parts))
-        {
-            return false;
-        }
-
-        foreach ($route_parts as $index => $part) {
-            if(!preg_match("/$part/", $url_parts[$index]))
-            {
-                return false;
-            }
-        }
-        */
-
         self::loadController($controller, new RequestData($query));
 
         
-        return true;
+        return True;
     }
 
     public static function Post(string $route, string $controller)
     {
-        if($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            return False;
-        }
+        $query = self::mapping('POST', $route);
 
-        $query = self::match(self::$route.$route, $_SERVER['REQUEST_URI']);
-        if($query === False || $query === null)
+        if($query === False) 
         {
             return False;
         }
@@ -119,7 +98,36 @@ class Route
         return true;
     }
 
-    // TODO Implement all HTTP METHOD
+    public static function Put(string $route, string $controller)
+    {
+        $query = self::mapping('PUT', $route);
+
+        if($query === False) 
+        {
+            return False;
+        }
+        self::loadController($controller, new RequestData($query, $_POST));
+
+        
+        return true;
+    }
+
+    public static function Delete(string $route, string $controller)
+    {
+        $query = self::mapping('DELETE', $route);
+
+        if($query === False) 
+        {
+            return False;
+        }
+
+        self::loadController($controller, new RequestData($query));
+
+        
+        return true;
+    }
+
+    // TODO Implement PATCH HTTP METHOD
 
     public static function Group(string $top_route, $callback)
     {
