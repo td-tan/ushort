@@ -7,7 +7,7 @@ class RequestData
     public array $get;
     public array $post;
 
-    public function __construct(array $get, array $post)
+    public function __construct(array $get, array $post = [])
     {
         $this->get = $get;
         $this->post = $post;
