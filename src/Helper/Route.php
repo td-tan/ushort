@@ -32,6 +32,10 @@ class Route
         {
             return [];
         }
+        if(count($matches) < 2)
+        {
+            return $matches;
+        }
         return array($param => $matches[$param]); // We only want Get parameter
     }
 
