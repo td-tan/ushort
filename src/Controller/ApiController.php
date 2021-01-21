@@ -11,19 +11,34 @@ class ApiController
     public function login(RequestData $rd)
     {
 
+        // TODO Generalize error message, should not be verbose
         $user = User::query()->where('email', '=', $rd->body['username']);
-        if($user->count() < 1)
+
+        // Guard: First verify existence
+        if ($user->count() < 1)
         {
             $response = [
-                'message' => 'Failure',
+                'message' => 'failure',
                 'body' => [
-                    'error' => 'User does not exists.'
+                    'error_msg' => 'User does not exists.'
                 ]
             ];
             return json_encode($response);
         }
 
         $user = $user->first();
+
+        // Guard: Verify password hash
+        if (!password_verify($rd->body['password'], $user->password))
+        {
+            $response = [
+                'message' => 'failure',
+                'body' => [
+                    'error_msg' => 'Password is wrong.'
+                ]
+            ];
+            return json_encode($response);
+        }
 
         $payload = array(
             "iss" => "http://ushort.test",
@@ -38,7 +53,7 @@ class ApiController
         $jwt = JWT::encode($payload, $_ENV['APP_KEY']);
 
         $response = [
-            'message' => 'Success',
+            'message' => 'success',
             'body' => [
                 'access_token' => $jwt
             ]
