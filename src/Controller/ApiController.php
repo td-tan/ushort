@@ -5,12 +5,13 @@ namespace App\Controller;
 use Helper\RequestData;
 use Firebase\JWT\JWT;
 use App\Model\User;
+use Exception;
 
 class ApiController
 {
-    public function login(RequestData $rd)
+    public function login(RequestData $rd) : string
     {
-
+        header('Content-Type: application/json');
         // TODO Generalize error message, should not be verbose
         $user = User::query()->where('email', '=', $rd->body['username']);
 
@@ -47,7 +48,7 @@ class ApiController
             "name" => $user->email,
             "iat" => time(),
             "nbf" => time(),
-            "exp" => time() + 60
+            "exp" => time() + 3600 // Expire after 1 hour
         );
 
         $jwt = JWT::encode($payload, $_ENV['APP_KEY']);
@@ -59,5 +60,67 @@ class ApiController
             ]
         ];
         return json_encode($response);
+    }
+
+    public function get_user(RequestData $rd) : string
+    {
+        header('Content-Type: application/json');
+        // TODO Implement user data api
+        if(!isset($_SERVER['HTTP_AUTHORIZATION']))
+        {
+            $response = [
+                'message' => 'failure',
+                'body' => [
+                    'error_msg' => 'No Authorization header.'
+                ]
+            ];
+            return json_encode($response);
+        }
+        $auth_header_values = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
+
+        if($auth_header_values < 2)
+        {
+            $response = [
+                'message' => 'failure',
+                'body' => [
+                    'error_msg' => 'No access token.'
+                ]
+            ];
+            return json_encode($response);
+        }
+
+        if($auth_header_values[0] !== 'Bearer')
+        {
+            $response = [
+                'message' => 'failure',
+                'body' => [
+                    'error_msg' => 'Invalid Authorization header.'
+                ]
+            ];
+            return json_encode($response);
+        }
+
+        $access_token = $auth_header_values[1];
+
+        // Verify access token
+        try 
+        {
+            $jwt = JWT::decode($access_token, $_ENV['APP_KEY'], ['HS256']);
+        } 
+        catch (Exception $ex)
+        {
+            $response = [
+                'message' => 'failure',
+                'body' => [
+                    'error_msg' => 'Invalid access token: '.$ex->getMessage()
+                ]
+            ];
+
+            return json_encode($response);
+        }
+
+        // Green light for user
+
+        return json_encode($jwt);
     }
 }
