@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Helper\RequestData;
+use App\Helper\RequestData;
 
 class HomeController
 {

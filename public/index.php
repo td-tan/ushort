@@ -3,14 +3,15 @@
 require('../vendor/autoload.php');
 require('../src/Helper/Route.php');
 
-use App\Controller\ApiController;
+
 use Symfony\Component\Dotenv\Dotenv;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use eftec\bladeone\BladeOne;
 
 use App\Controller\HomeController;
+use App\Controller\ApiController;
 
-use Helper\Route;
+use App\Helper\Route;
 
 // TODO Auth JWT library
 // TODO Connection Postgresql pdo

@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use Helper\RequestData;
 use Firebase\JWT\JWT;
 use App\Model\User;
+use App\Helper\Utils;
+use App\Helper\RequestData;
 use Exception;
 
 class ApiController
@@ -18,13 +19,7 @@ class ApiController
         // Guard: First verify existence
         if ($user->count() < 1)
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'User does not exists.'
-                ]
-            ];
-            return json_encode($response);
+            return json_encode(Utils::error_message('User does not exists.'));
         }
 
         $user = $user->first();
@@ -120,7 +115,7 @@ class ApiController
         }
 
         // Green light for user
-
+        
         return json_encode($jwt);
     }
 }

@@ -1,8 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Helper;
+namespace App\Helper;
 
-require('RequestData.php');
+
+//require('RequestData.php');
 
 // TODO Implement ErrorController
 // TODO Better route matching: \{(\w+)=(alpha)?\|?(digit)?\}
