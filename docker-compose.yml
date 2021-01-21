@@ -9,3 +9,16 @@ services:
       - POSTGRES_PASSWORD=toor
     ports:
       - "127.0.0.1:5432:5432/tcp"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - 127.0.0.1:5555:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.test
+      PGADMIN_DEFAULT_PASSWORD: admin
+    restart: unless-stopped
+
+# docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
