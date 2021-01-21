@@ -4,8 +4,10 @@ session_start();
 require('../vendor/autoload.php');
 require('../src/Helper/Route.php');
 
+use App\Controller\ApiController;
 use Symfony\Component\Dotenv\Dotenv;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use eftec\bladeone\BladeOne;
 
 use App\Controller\HomeController;
 
@@ -18,13 +20,15 @@ use Helper\Route;
 
 // Load from .env
 $dotenv = new Dotenv();
-$dotenv->load(__DIR__.'/../.env');
+$dotenv->load(dirname(__DIR__).'/.env');
 
+// Load DB Connection
 $capsule = new Capsule;
 
 $capsule->addConnection([
     'driver'    => $_ENV['DB_DRIVER'],
     'host'      => $_ENV['DB_HOST'],
+    'port'      => $_ENV['DB_PORT'],
     'database'  => $_ENV['DB_NAME'],
     'username'  => $_ENV['DB_USER'],
     'password'  => $_ENV['DB_PASS'],
@@ -42,11 +46,23 @@ $capsule->bootEloquent();
 
 // Routing
 
-Route::Get('/', HomeController::class.'@index');
-Route::Get('/test/{id}', HomeController::class.'@index');
-Route::Put('/test/{t}', HomeController::class.'@index');
+// No direct access to ressources
+if (preg_match('/\.(?:css|js|png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])) 
+{
+    return false;
+}
 
-Route::Group('/auth', function () {
-    Route::Get("/test/{id}", HomeController::class.'@index');
-    Route::Post("/test/user/{user_id}", HomeController::class.'@index');
+Route::Get('/', HomeController::class.'@index');
+
+Route::Group('/api', function () {
+    Route::POST("/login", ApiController::class.'@login');
 });
+
+// To render view
+function view(string $viewname, array $viewargs) {
+    $views = dirname(__DIR__) . '/src/View';
+    $cache = dirname(__DIR__) . '/storage/cache';
+    $blade = new BladeOne($views, $cache, BladeOne::MODE_DEBUG);
+
+    return $blade->run($viewname, $viewargs);
+}
