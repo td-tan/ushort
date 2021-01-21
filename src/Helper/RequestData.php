@@ -5,11 +5,11 @@ namespace Helper;
 class RequestData
 {
     public array $query;
-    public array $data;
+    public array $body;
 
-    public function __construct(array $query = [], array $data = [])
+    public function __construct(array $query = [], array $body = [])
     {
         $this->query = $query;
-        $this->data = $data;
+        $this->body = $body;
     }
 }
