@@ -20,11 +20,26 @@ final class Migration extends AbstractMigration
     {
         // create the user table
         $table = $this->table('users');
-        $table->addColumn('user_id', 'integer')
-              ->addColumn('email', 'string', array('limit' => 100))
+        $table->addColumn('email', 'string', array('limit' => 100))
               ->addColumn('password', 'string')
               ->addIndex(array('email'), array('unique' => true))
               ->addTimestamps()
               ->create();
+
+        // inserting multiple rows
+        $rows = [
+            [
+              'id'    => 1,
+              'email'  => 'admin@ushort.example',
+              'password' => password_hash('admin', PASSWORD_DEFAULT),
+            ],
+            [
+              'id'    => 2,
+              'email'  => 'test@ushort.example',
+              'password' => password_hash('test', PASSWORD_DEFAULT),
+            ]
+        ];
+
+        $table->insert($rows)->save();
     }
 }
