@@ -27,13 +27,7 @@ class ApiController
         // Guard: Verify password hash
         if (!password_verify($rd->body['password'], $user->password))
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'Password is wrong.'
-                ]
-            ];
-            return json_encode($response);
+            return json_encode(Utils::error_message('Password is wrong.'));
         }
 
         $payload = array(
@@ -63,36 +57,18 @@ class ApiController
         // TODO Implement user data api
         if(!isset($_SERVER['HTTP_AUTHORIZATION']))
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'No Authorization header.'
-                ]
-            ];
-            return json_encode($response);
+            return json_encode(Utils::error_message('No Authorization header.'));
         }
         $auth_header_values = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
 
         if($auth_header_values < 2)
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'No access token.'
-                ]
-            ];
-            return json_encode($response);
+            return json_encode(Utils::error_message('No access token.'));
         }
 
         if($auth_header_values[0] !== 'Bearer')
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'Invalid Authorization header.'
-                ]
-            ];
-            return json_encode($response);
+            return json_encode(Utils::error_message('Invalid Authorization header.'));
         }
 
         $access_token = $auth_header_values[1];
@@ -104,14 +80,7 @@ class ApiController
         } 
         catch (Exception $ex)
         {
-            $response = [
-                'message' => 'failure',
-                'body' => [
-                    'error_msg' => 'Invalid access token: '.$ex->getMessage()
-                ]
-            ];
-
-            return json_encode($response);
+            return json_encode(Utils::error_message('Invalid access token: '.$ex->getMessage()));
         }
 
         // Green light for user
