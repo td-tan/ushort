@@ -1,6 +1,9 @@
 
+
 window.addEventListener('load', function () {
     'use strict';
+
+    var access_token;
 
     // Get the forms we want to add validation styles to
     var forms = document.getElementsByClassName('needs-validation');
@@ -10,6 +13,7 @@ window.addEventListener('load', function () {
             // Ignore default behavior
             event.preventDefault();
             event.stopPropagation();
+            // Form validation
             if (form.checkValidity()) {
                 form.classList.add('was-validated');
                 if (form.attributes.id.value === 'login') {
@@ -17,15 +21,23 @@ window.addEventListener('load', function () {
                     const password = form[1].value;
                     const remember_me = form[2].checked;
 
-                    const data = login(username, password);
+                    const data = call_login_api(username, password);
 
                     form[3].children[0].removeAttribute('hidden'); // spinner visible
                     data.then(json => {
+                        form[3].children[0].setAttribute('hidden', ''); // spinner hidden again
+
+                        // Remove old errors
+                        var error_msg = document.getElementById('err_msg');
+                        if (error_msg) {
+                            error_msg.remove();
+                        }
                         // First check status message
                         if(json.message === 'failure')
                         {
                             // Create error notice on the fly
                             let error_node = document.createElement('div')
+                            error_node.setAttribute('id', 'err_msg');
                             error_node.setAttribute('class', 'mt-3 alert alert-danger');
                             error_node.setAttribute('role', 'alert');
                             error_node.textContent = json.body.error_msg;
@@ -35,17 +47,24 @@ window.addEventListener('load', function () {
 
                             console.log(form);
                             console.log(json.body.error_msg);
+                            return;
                         }
-                        form[3].children[0].setAttribute('hidden', ''); // spinner hidden again
+                        // Store jwt token in memory
+                        access_token = json.body.access_token;
+
+                        // login was successful, go to dashboard
+                        
                     });
                     data.catch(error => console.log(error));
                 }
             }
         });
     });
+
+    console.log(access_token);
 });
 
-async function login(username, password) {
+async function call_login_api(username, password) {
     'use strict';
 
     let user = {
