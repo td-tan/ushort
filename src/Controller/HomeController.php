@@ -8,7 +8,6 @@ class HomeController
 {
     public function index(RequestData $rd)
     {
-        echo "HOME";
-        var_dump($rd);
+        return view('pages.home', []);
     }
 }
