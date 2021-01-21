@@ -27,16 +27,18 @@ window.addEventListener('load', function () {
                     data.then(json => {
                         form[3].children[0].setAttribute('hidden', ''); // spinner hidden again
 
-                        // Remove old errors
-                        var error_msg = document.getElementById('err_msg');
-                        if (error_msg) {
-                            error_msg.remove();
+                        // Remove old alerts
+                        var alerts = document.getElementsByClassName('alert');
+                        if (alerts.length > 0) {
+                            for (let alert of alerts) {
+                                alert.remove();
+                            }
                         }
                         // First check status message
                         if(json.message === 'failure')
                         {
                             // Create error notice on the fly
-                            let error_node = document.createElement('div')
+                            let error_node = document.createElement('div');
                             error_node.setAttribute('id', 'err_msg');
                             error_node.setAttribute('class', 'mt-3 alert alert-danger');
                             error_node.setAttribute('role', 'alert');
@@ -45,14 +47,19 @@ window.addEventListener('load', function () {
                             form.appendChild(error_node);
                             form.classList.remove('was-validated');
 
-                            console.log(form);
-                            console.log(json.body.error_msg);
                             return;
                         }
                         // Store jwt token in memory
                         access_token = json.body.access_token;
 
                         // login was successful, go to dashboard
+                        let success_node = document.createElement('div');
+                        success_node.setAttribute('id', 'suc_msg');
+                        success_node.setAttribute('class', 'mt-3 alert alert-success');
+                        success_node.setAttribute('role', 'alert');
+                        success_node.textContent = "Login was successful!";
+                        form.appendChild(success_node);
+
                         
                     });
                     data.catch(error => console.log(error));
