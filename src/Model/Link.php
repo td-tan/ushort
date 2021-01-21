@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Link extends Model
 {
+    /**
+     * Get user that created short links
+     */
     public function user()
     {
         return $this->belongsTo(Link::class);
