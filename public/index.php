@@ -54,7 +54,8 @@ if (preg_match('/\.(?:css|js|png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"]))
 Route::Get('/', HomeController::class.'@index');
 
 Route::Group('/api', function () {
-    Route::POST("/login", ApiController::class.'@login');
+    Route::Post('/login', ApiController::class.'@login');
+    Route::Get('/user', ApiController::class.'@get_user');
 });
 
 // To render view
