@@ -11,7 +11,7 @@ class Route
 
     static string $route = "";
 
-    public static function match(string $route, string $url) : array
+    public static function match(string $route, string $url) : ?array
     {
         $url = parse_url($_SERVER['REQUEST_URI']);
         $path = $url['path'];
@@ -30,11 +30,12 @@ class Route
         $pattern = str_replace('/', '\/', $route);
         if (!preg_match("/^$pattern$/", $path, $matches))
         {
-            return [];
+            return Null;
         }
+
         if(count($matches) < 2)
         {
-            return $matches;
+            return [];
         }
         return array($param => $matches[$param]); // We only want Get parameter
     }
@@ -66,7 +67,7 @@ class Route
         }
 
         $query = self::match(self::$route.$route, $_SERVER['REQUEST_URI']);
-        if(empty($query))
+        if(is_null($query))
         {
             return False;
         }
