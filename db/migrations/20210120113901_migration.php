@@ -20,18 +20,20 @@ final class Migration extends AbstractMigration
     {
         // create the user table
         $table = $this->table('users');
-        $table->addColumn('email', 'string', array('limit' => 100))
-              ->addColumn('password', 'string')
+        $table->addColumn('email', 'string', array('limit' => 100, 'null' => false))
+              ->addColumn('password', 'string', array('null' => false))
+              ->addColumn('admin', 'boolean', array('default' => false, 'null' => false))
               ->addIndex(array('email'), array('unique' => true))
               ->addTimestamps()
               ->create();
 
-        // inserting multiple rows
+        // inserting multiple rows in users table
         $rows = [
             [
               'id'    => 1,
               'email'  => 'admin@ushort.example',
               'password' => password_hash('admin', PASSWORD_DEFAULT),
+              'admin' => True
             ],
             [
               'id'    => 2,
@@ -41,5 +43,14 @@ final class Migration extends AbstractMigration
         ];
 
         $table->insert($rows)->save();
+
+        // create the links table
+        $table = $this->table('links');
+        $table->addColumn('user_id', 'integer')
+              ->addColumn('link', 'string', array('null' => false))
+              ->addIndex(array('user_id', 'link'), array('unique' => true))
+              ->addTimestamps()
+              ->addForeignKey('user_id', 'users')
+              ->create();
     }
 }
