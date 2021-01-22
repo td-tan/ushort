@@ -98,7 +98,12 @@ class Route
             return False;
         }
 
-        $_POST = json_decode(file_get_contents('php://input'), true);
+        $json_data = json_decode(file_get_contents('php://input'), true);
+
+        if($json_data)
+        {
+            $_POST = $json_data;
+        }
 
         self::loadController($controller, new RequestData($query, $_POST));
 
@@ -114,7 +119,12 @@ class Route
         {
             return False;
         }
-        $_POST = json_decode(file_get_contents('php://input'), true);
+        $json_data = json_decode(file_get_contents('php://input'), true);
+
+        if($json_data)
+        {
+            $_POST = $json_data;
+        }
 
         self::loadController($controller, new RequestData($query, $_POST));
 
