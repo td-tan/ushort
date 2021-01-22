@@ -13,4 +13,12 @@ class User extends Model
     {
         return $this->hasMany(Link::class);
     }
+
+    /**
+     * Get the token for User
+     */
+    public function token()
+    {
+        return $this->hasOne(Token::class);
+    }
 }

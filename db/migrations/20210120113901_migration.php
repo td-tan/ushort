@@ -58,9 +58,10 @@ final class Migration extends AbstractMigration
         // create the token table
         $table = $this->table('tokens');
         $table->addColumn('user_id', 'integer')
-              ->addColumn('access_token', 'string', array('null' => false))
+              ->addColumn('ip_addr', 'string', array('null' => false))
               ->addColumn('refresh_token', 'string', array('null' => false))
-              ->addIndex(array('user_id', 'access_token', 'refresh_token'), array('unique' => true))
+              ->addColumn('expire_at', 'timestamp', array('null' => false))
+              ->addIndex(array('user_id', 'ip_addr', 'refresh_token'), array('unique' => true))
               ->addForeignKey('user_id', 'users')
               ->addTimestamps()
               ->create();
