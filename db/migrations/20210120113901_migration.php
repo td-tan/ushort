@@ -41,13 +41,15 @@ final class Migration extends AbstractMigration
               'password' => password_hash('test', PASSWORD_DEFAULT),
             ]
         ];
-
-        $table->insert($rows)->save();
-
+        if ($this->isMigratingUp()) {
+          $table->insert($rows)->update();
+        }
         // create the links table
         $table = $this->table('links');
         $table->addColumn('user_id', 'integer')
               ->addColumn('link', 'string', array('null' => false))
+              ->addColumn('short', 'string', array('null' => false)) // short link
+              ->addColumn('deleted', 'boolean', array('null' => false, 'default' => false)) // for soft delete
               ->addIndex(array('user_id', 'link'), array('unique' => true))
               ->addTimestamps()
               ->addForeignKey('user_id', 'users')
