@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use App\Model\User;
 use App\Helper\Utils;
 use App\Helper\RequestData;
+use App\Model\Token;
 use Exception;
 
 class ApiController
@@ -41,11 +42,45 @@ class ApiController
         );
 
         $jwt = JWT::encode($payload, $_ENV['APP_KEY']);
+        $client_ip_addr = $_SERVER['REMOTE_ADDR'];
+
+        $bytes = random_bytes(32);
+
+        $jwt_refresh_token = bin2hex(uniqid('', True).$bytes.$client_ip_addr);
+
+        // Store refresh_token in db
+        // Prepare token
+        $token = new Token();
+        $token->ip_addr = $client_ip_addr;
+        $token->refresh_token = $jwt_refresh_token;
+
+        // Expire window
+        $datetime = new \DateTime('NOW');
+        $datetime->modify('+1 day');
+
+        $token->expire_at = $datetime->format('Y-m-d H:i:s'); // 1 day refresh token lifetime
+
+        // User has only one token
+        $user_token = $user->token();
+        if ($user_token->count() < 1)
+        {
+            $user_token->save($token);
+        }
+        else
+        {
+            $user_token = $user_token->first();
+            $user_token->ip_addr = $token->ip_addr;
+            $user_token->refresh_token = $token->refresh_token;
+            $user_token->expire_at = $token->expire_at;
+            $user_token->save();
+        }
+
 
         $response = [
             'message' => 'success',
             'body' => [
-                'access_token' => $jwt
+                'access_token' => $jwt,
+                'refresh_token' => $jwt_refresh_token
             ]
         ];
         return json_encode($response);
