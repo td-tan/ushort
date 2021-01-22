@@ -11,6 +11,6 @@ class Link extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Link::class);
+        return $this->belongsTo(User::class);
     }
 }

@@ -11,6 +11,6 @@ class Token extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Token::class);
+        return $this->belongsTo(User::class);
     }
 }
