@@ -24,7 +24,7 @@ final class Migration extends AbstractMigration
               ->addColumn('password', 'string', array('null' => false))
               ->addColumn('admin', 'boolean', array('default' => false, 'null' => false))
               ->addIndex(array('email'), array('unique' => true))
-              ->addTimestamps(True)
+              ->addTimestamps()
               ->create();
 
         // inserting multiple rows in users table
@@ -51,8 +51,8 @@ final class Migration extends AbstractMigration
               ->addColumn('short', 'string', array('null' => false)) // short link
               ->addColumn('deleted', 'boolean', array('null' => false, 'default' => false)) // for soft delete
               ->addIndex(array('user_id', 'link'), array('unique' => true))
-              ->addTimestamps(True)
               ->addForeignKey('user_id', 'users')
+              ->addTimestamps()
               ->create();
 
         // create the token table
@@ -62,7 +62,7 @@ final class Migration extends AbstractMigration
               ->addColumn('refresh_token', 'string', array('null' => false))
               ->addIndex(array('user_id', 'access_token', 'refresh_token'), array('unique' => true))
               ->addForeignKey('user_id', 'users')
-              ->addTimestamps(True)
+              ->addTimestamps()
               ->create();
     }
 }
