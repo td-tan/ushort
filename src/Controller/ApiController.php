@@ -176,7 +176,9 @@ class ApiController
         $user = User::query()->find((int)$jwt->sub);
         // TODO Invalidate old jwt access_token, check refresh_token
         // TODO Check if refresh expired
-        if($rd->body['refresh_token'] !== $user->token->refresh_token && $user->token->expire_at === date("Y-m-d H:i:s"))
+        // TODO Invalidate refresh_token on logout
+
+        if($rd->body['refresh_token'] !== $user->token->refresh_token && date("Y-m-d H:i:s", strtotime($user->token->expire_at)) < date("Y-m-d H:i:s"))
         {
             return json_encode(Utils::error_message('Invalid refresh token.'));
         }
@@ -204,7 +206,7 @@ class ApiController
         // Prepare token
         $token = new Token();
         $token->ip_addr = $client_ip_addr;
-        $token->refresh_token = $jwt_refresh_token;
+        //$token->refresh_token = $jwt_refresh_token;
 
         // Expire window
         $datetime = new \DateTime('NOW');
@@ -214,15 +216,15 @@ class ApiController
 
         // User has only one token
         $user_token = $user->token();
-        if ($user_token->count() < 1)
+        /*if ($user_token->count() < 1)
         {
             $user_token->save($token);
-        }
-        else
+        }*/
+        if($user->count() > 1)
         {
             $user_token = $user_token->first();
             $user_token->ip_addr = $token->ip_addr;
-            $user_token->refresh_token = $token->refresh_token;
+            //$user_token->refresh_token = $token->refresh_token;
             $user_token->expire_at = $token->expire_at;
             $user_token->save();
         }
