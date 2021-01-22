@@ -57,6 +57,7 @@ Route::Get('/', HomeController::class.'@index');
 Route::Group('/api', function () {
     Route::Post('/login', ApiController::class.'@login');
     Route::Get('/user', ApiController::class.'@get_user');
+    Route::Post('/refresh', ApiController::class.'@refresh_token');
 });
 
 // To render view
