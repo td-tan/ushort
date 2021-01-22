@@ -62,7 +62,7 @@ final class Migration extends AbstractMigration
               ->addColumn('refresh_token', 'string', array('null' => false))
               ->addColumn('expire_at', 'timestamp', array('null' => false))
               ->addIndex(array('user_id', 'ip_addr', 'refresh_token'), array('unique' => true))
-              ->addForeignKey('user_id', 'users')
+              ->addForeignKey('user_id', 'users', ['id'], ['delete' => 'CASCADE'])
               ->addTimestamps()
               ->create();
     }
