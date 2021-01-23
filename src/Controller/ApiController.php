@@ -62,10 +62,10 @@ class ApiController
         $token->refresh_token = $jwt_refresh_token;
 
         // Expire window
-        $datetime = new \DateTime('NOW');
-        $datetime->modify('+1 day');
+        $expire_date_time = new \DateTime();
+        $expire_date_time->modify('+1 day');
 
-        $token->expire_at = $datetime->format('Y-m-d H:i:s'); // 1 day refresh token lifetime
+        $token->expire_at = $expire_date_time->format('Y-m-d H:i:s'); // 1 day refresh token lifetime
 
         // User has only one token
         $user_token = $user->token();
@@ -81,6 +81,15 @@ class ApiController
             $user_token->expire_at = $token->expire_at;
             $user_token->save();
         }
+
+        setcookie('refresh_token', $token->refresh_token, [
+            'expires' => strtotime($token->expire_at), 
+            'path' => '/api/refresh', 
+            'domain' => '', 
+            'secure' => False, 
+            'httponly' => True, 
+            'samesite' => 'Lax',
+        ]);
 
 
         $response = [
@@ -135,6 +144,8 @@ class ApiController
     {
         // TODO Refactor jwt verification logic
         header('Content-Type: application/json');
+
+        return json_encode($_COOKIE);
 
         if(!isset($rd->body['refresh_token']))
         {
