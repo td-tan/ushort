@@ -6,6 +6,14 @@ window.addEventListener('load', function () {
     var access_token;
     var refresh_token;
 
+    // Silent refresh
+    call_refresh_api().then(json => {
+        if(json.message === 'success') {
+            access_token = json.body.access_token;
+            show_dashboard(access_token);
+        }
+    });
+
     // Get the forms we want to add validation styles to
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
@@ -54,7 +62,6 @@ window.addEventListener('load', function () {
                         access_token = json.body.access_token;
                         refresh_token = json.body.refresh_token; // As cookie?
 
-
                         // login was successful, go to dashboard
                         let success_node = document.createElement('div');
                         success_node.setAttribute('id', 'suc_msg');
@@ -63,58 +70,8 @@ window.addEventListener('load', function () {
                         success_node.textContent = "Login was successful!";
                         form.appendChild(success_node);
 
+                        show_dashboard(access_token);
 
-                        call_refresh_api(access_token);
-
-                        // Create dashboard for user
-                        const user_info = call_user_api(access_token);
-                        const dashboard = document.getElementById('dashboard');
-                        const tbody = document.getElementById('ltable');
-                        const spinner = document.getElementById('data-loading');
-                        spinner.removeAttribute('hidden');
-
-                        user_info.then( json => {
-                            json.body.links.forEach(element => {
-                                const tr = document.createElement('tr');
-                                const td0 = document.createElement('td');
-                                const td1 = document.createElement('td');
-                                const td2 = document.createElement('td');
-                                td0.textContent = element.link;
-                                td1.textContent = element.redirect;
-                                td2.textContent = element.created;
-
-                                tr.appendChild(td0);
-                                tr.appendChild(td1);
-                                tr.appendChild(td2);
-                                tbody.appendChild(tr);
-                            });
-                            spinner.setAttribute('hidden', '');
-                        });
-                        dashboard.removeAttribute('hidden');
-                        // Simple filter function w3school
-                        $("#search").on("keyup", function() {
-                            var value = $(this).val().toLowerCase();
-                            $("#ltable tr").filter(function() {
-                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                            });
-                        });
-
-                        document.getElementById('create').addEventListener('click', function create() {
-                            // TODO Create new short link
-                            const tr = document.createElement('tr');
-                            const td0 = document.createElement('td');
-                            const td1 = document.createElement('td');
-                            const td2 = document.createElement('td');
-
-                            td0.setAttribute('contenteditable', '');
-                            td1.setAttribute('contenteditable', '');
-
-                            tr.appendChild(td0);
-                            tr.appendChild(td1);
-                            tr.appendChild(td2);
-    
-                            tbody.appendChild(tr);
-                        });
                     });
                     data.catch(error => console.log(error));
                 }
@@ -125,6 +82,59 @@ window.addEventListener('load', function () {
 
     console.log(access_token);
 });
+
+function show_dashboard(access_token) {
+
+    // Create dashboard for user
+    const user_info = call_user_api(access_token);
+    const dashboard = document.getElementById('dashboard');
+    const tbody = document.getElementById('ltable');
+    const spinner = document.getElementById('data-loading');
+    spinner.removeAttribute('hidden');
+
+    user_info.then( json => {
+        json.body.links.forEach(element => {
+            const tr = document.createElement('tr');
+            const td0 = document.createElement('td');
+            const td1 = document.createElement('td');
+            const td2 = document.createElement('td');
+            td0.textContent = element.link;
+            td1.textContent = element.redirect;
+            td2.textContent = element.created;
+
+            tr.appendChild(td0);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tbody.appendChild(tr);
+        });
+        spinner.setAttribute('hidden', '');
+    });
+    dashboard.removeAttribute('hidden');
+    // Simple filter function w3school
+    $("#search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#ltable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    document.getElementById('create').addEventListener('click', function create() {
+        // TODO Create new short link
+        const tr = document.createElement('tr');
+        const td0 = document.createElement('td');
+        const td1 = document.createElement('td');
+        const td2 = document.createElement('td');
+
+        td0.setAttribute('contenteditable', '');
+        td1.setAttribute('contenteditable', '');
+
+        tr.appendChild(td0);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+
+        tbody.appendChild(tr);
+    });
+}
 
 async function call_login_api(username, password) {
     'use strict';
@@ -145,14 +155,13 @@ async function call_login_api(username, password) {
     return await response.json();
 }
 
-async function call_refresh_api(access_token) {
+async function call_refresh_api() {
     'use strict';
 
 
     let response = await fetch('/api/refresh', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json;charset=utf-8'
         }
     });
