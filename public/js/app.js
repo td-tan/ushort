@@ -69,11 +69,11 @@ window.addEventListener('load', function () {
                         // Create dashboard for user
                         const user_info = call_user_api(access_token);
                         const dashboard = document.getElementById('dashboard');
+                        const tbody = document.getElementById('ltable');
                         const spinner = document.getElementById('data-loading');
                         spinner.removeAttribute('hidden');
-                        user_info.then( json => {
 
-                            const tbody = document.getElementById('ltable');
+                        user_info.then( json => {
                             json.body.links.forEach(element => {
                                 const tr = document.createElement('tr');
                                 const td0 = document.createElement('td');
@@ -91,12 +91,37 @@ window.addEventListener('load', function () {
                             spinner.setAttribute('hidden', '');
                         });
                         dashboard.removeAttribute('hidden');
+                        // Simple filter function w3school
+                        $("#search").on("keyup", function() {
+                            var value = $(this).val().toLowerCase();
+                            $("#ltable tr").filter(function() {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+
+                        document.getElementById('create').addEventListener('click', function create() {
+                            // TODO Create new short link
+                            const tr = document.createElement('tr');
+                            const td0 = document.createElement('td');
+                            const td1 = document.createElement('td');
+                            const td2 = document.createElement('td');
+
+                            td0.setAttribute('contenteditable', '');
+                            td1.setAttribute('contenteditable', '');
+
+                            tr.appendChild(td0);
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+    
+                            tbody.appendChild(tr);
+                        });
                     });
                     data.catch(error => console.log(error));
                 }
             }
         });
     });
+
 
     console.log(access_token);
 });
