@@ -145,9 +145,7 @@ class ApiController
         // TODO Refactor jwt verification logic
         header('Content-Type: application/json');
 
-        return json_encode($_COOKIE);
-
-        if(!isset($rd->body['refresh_token']))
+        if(!isset($rd->cookie['refresh_token']))
         {
             return json_encode(Utils::error_message('No refresh token.'));
         }
@@ -189,7 +187,7 @@ class ApiController
         // TODO Check if refresh expired
         // TODO Invalidate refresh_token on logout
 
-        if($rd->body['refresh_token'] !== $user->token->refresh_token && date("Y-m-d H:i:s", strtotime($user->token->expire_at)) < date("Y-m-d H:i:s"))
+        if($rd->cookie['refresh_token'] !== $user->token->refresh_token && date("Y-m-d H:i:s", strtotime($user->token->expire_at)) < date("Y-m-d H:i:s"))
         {
             return json_encode(Utils::error_message('Invalid refresh token.'));
         }
@@ -248,6 +246,7 @@ class ApiController
                 'refresh_token' => $jwt_refresh_token
             ]
         ];
+
         return json_encode($response);
     }
 }
