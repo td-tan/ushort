@@ -54,7 +54,6 @@ window.addEventListener('load', function () {
                         access_token = json.body.access_token;
                         refresh_token = json.body.refresh_token; // As cookie?
 
-                        call_refresh_api(access_token);
 
                         // login was successful, go to dashboard
                         let success_node = document.createElement('div');
@@ -64,7 +63,36 @@ window.addEventListener('load', function () {
                         success_node.textContent = "Login was successful!";
                         form.appendChild(success_node);
 
-                        
+
+                        call_refresh_api(access_token);
+
+                        // Create dashboard for user
+                        const user_info = call_user_api(access_token);
+                        const dashboard = document.getElementById('dashboard');
+                        const spinner = document.getElementById('data-loading');
+                        spinner.removeAttribute('hidden');
+                        user_info.then( json => {
+
+                            const tbody = document.getElementById('ltable');
+                            json.body.links.forEach(element => {
+                                const tr = document.createElement('tr');
+                                const td0 = document.createElement('td');
+                                const td1 = document.createElement('td');
+                                const td2 = document.createElement('td');
+                                td0.textContent = element.link;
+                                td1.textContent = element.redirect;
+                                td2.textContent = element.created;
+
+                                tr.appendChild(td0);
+                                tr.appendChild(td1);
+                                tr.appendChild(td2);
+                                tbody.appendChild(tr);
+                            });
+                            dashboard.appendChild(tbody);
+                            spinner.setAttribute('hidden', '');
+                        });
+                        dashboard.setAttribute('class', 'table table-bordered table-striped');
+                        dashboard.removeAttribute('hidden');
                     });
                     data.catch(error => console.log(error));
                 }
@@ -100,6 +128,21 @@ async function call_refresh_api(access_token) {
 
     let response = await fetch('/api/refresh', {
         method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        }
+    });
+
+    return await response.json();
+}
+
+async function call_user_api(access_token) {
+    'use strict';
+
+
+    let response = await fetch('/api/user', {
+        method: 'GET',
         headers: {
             'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json;charset=utf-8'

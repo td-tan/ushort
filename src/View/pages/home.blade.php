@@ -28,6 +28,27 @@
         </button>
     </form>
 </div>
+
+<div id="dashboard" class="container" hidden>
+    <h2>Dashboard, Welcome </h2>
+    <p>Filter:</p>  
+    <input class="form-control" id="search" type="text" placeholder="Search..">
+    <br>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Link</th>
+          <th>Short Link</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody id="ltable">
+      </tbody>
+    </table>
+    <div id="data-loading" class="spinner-border" role="status" hidden>
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 @endsection
 
 @section('script')
