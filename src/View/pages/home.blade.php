@@ -45,10 +45,12 @@
       <tbody id="ltable" class="table table-bordered table-striped">
       </tbody>
     </table>
-    
-    <div id="data-loading" class="spinner-border" role="status" hidden>
-        <span class="sr-only">Loading...</span>
+    <div class="text-center">
+        <div id="data-loading" class="spinner-border" role="status" hidden>
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
+    <button id="create" type="button" class="mt-3 btn btn-primary btn-lg btn-block">Create new short link</button>
 </div>
 @endsection
 
