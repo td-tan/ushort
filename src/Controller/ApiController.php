@@ -143,11 +143,11 @@ class ApiController
         $links = array();
         foreach($user_links as $link)
         {
-            array_push($links, array(
+            $links[] = array(
                 'link' => $link->link,
                 'redirect' => $link->short,
                 'created' => date('Y-m-d H:i', strtotime((string)$link->created_at))
-            ));
+            );
         }
         
         $response = [
