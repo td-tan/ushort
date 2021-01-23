@@ -12,6 +12,6 @@ class RequestData
     {
         $this->query = $query;
         $this->body = $body;
-        $this->cookies = $cookie;
+        $this->cookie = $cookie;
     }
 }
