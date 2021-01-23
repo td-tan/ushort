@@ -83,7 +83,7 @@ class Route
         {
             return False;
         }
-        self::loadController($controller, new RequestData($query));
+        self::loadController($controller, new RequestData($query, [], $_COOKIE));
 
         
         return True;
@@ -104,8 +104,7 @@ class Route
         {
             $_POST = $json_data;
         }
-
-        self::loadController($controller, new RequestData($query, $_POST));
+        self::loadController($controller, new RequestData($query, $_POST, $_COOKIE));
 
         
         return true;
@@ -126,7 +125,7 @@ class Route
             $_POST = $json_data;
         }
 
-        self::loadController($controller, new RequestData($query, $_POST));
+        self::loadController($controller, new RequestData($query, $_POST, $_COOKIE));
 
         
         return true;
@@ -141,7 +140,7 @@ class Route
             return False;
         }
 
-        self::loadController($controller, new RequestData($query));
+        self::loadController($controller, new RequestData($query, [], $_COOKIE));
 
         
         return true;
