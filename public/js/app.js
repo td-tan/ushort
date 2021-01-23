@@ -88,10 +88,8 @@ window.addEventListener('load', function () {
                                 tr.appendChild(td2);
                                 tbody.appendChild(tr);
                             });
-                            dashboard.appendChild(tbody);
                             spinner.setAttribute('hidden', '');
                         });
-                        dashboard.setAttribute('class', 'table table-bordered table-striped');
                         dashboard.removeAttribute('hidden');
                     });
                     data.catch(error => console.log(error));

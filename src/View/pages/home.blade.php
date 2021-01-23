@@ -42,9 +42,10 @@
           <th>Created</th>
         </tr>
       </thead>
-      <tbody id="ltable">
+      <tbody id="ltable" class="table table-bordered table-striped">
       </tbody>
     </table>
+    
     <div id="data-loading" class="spinner-border" role="status" hidden>
         <span class="sr-only">Loading...</span>
     </div>
