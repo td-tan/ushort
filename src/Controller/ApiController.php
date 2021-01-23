@@ -136,8 +136,28 @@ class ApiController
         }
 
         // Green light for user
+        $user = User::query()->find((int)$jwt->sub);
+        $user_links = $user->links()->get();
+
+        // Kovert to clean response
+        $links = array();
+        foreach($user_links as $link)
+        {
+            array_push($links, array(
+                'link' => $link->link,
+                'redirect' => $link->short,
+                'created' => date('Y-m-d H:i', strtotime((string)$link->created_at))
+            ));
+        }
         
-        return json_encode($jwt);
+        $response = [
+            'message' => 'success',
+            'body' => [
+                'links' => $links
+            ]
+        ];
+        
+        return json_encode($response);
     }
 
     public function refresh_token(RequestData $rd) : string
@@ -207,9 +227,9 @@ class ApiController
         
         $client_ip_addr = $_SERVER['REMOTE_ADDR'];
 
-        $bytes = random_bytes(32);
+        //$bytes = random_bytes(32);
 
-        $jwt_refresh_token = bin2hex(uniqid('', True).$bytes.$client_ip_addr);
+        //$jwt_refresh_token = bin2hex(uniqid('', True).$bytes.$client_ip_addr);
 
         // Store refresh_token in db
         // Prepare token
@@ -218,11 +238,12 @@ class ApiController
         //$token->refresh_token = $jwt_refresh_token;
 
         // Expire window
+        /*
         $datetime = new \DateTime('NOW');
         $datetime->modify('+1 day');
 
         $token->expire_at = $datetime->format('Y-m-d H:i:s'); // 1 day refresh token lifetime
-
+        */
         // User has only one token
         $user_token = $user->token();
         /*if ($user_token->count() < 1)
@@ -231,10 +252,11 @@ class ApiController
         }*/
         if($user->count() > 1)
         {
+            // TODO Verify ip addr?
             $user_token = $user_token->first();
             $user_token->ip_addr = $token->ip_addr;
             //$user_token->refresh_token = $token->refresh_token;
-            $user_token->expire_at = $token->expire_at;
+            //$user_token->expire_at = $token->expire_at;
             $user_token->save();
         }
 
@@ -243,7 +265,7 @@ class ApiController
             'message' => 'success',
             'body' => [
                 'access_token' => $jwt,
-                'refresh_token' => $jwt_refresh_token
+                //'refresh_token' => $jwt_refresh_token
             ]
         ];
 
