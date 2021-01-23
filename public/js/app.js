@@ -4,6 +4,7 @@ window.addEventListener('load', function () {
     'use strict';
 
     var access_token;
+    var refresh_token;
 
     // Get the forms we want to add validation styles to
     var forms = document.getElementsByClassName('needs-validation');
@@ -49,8 +50,11 @@ window.addEventListener('load', function () {
 
                             return;
                         }
-                        // Store jwt token in memory
+                        // Store jwt token & refresh_token in memory
                         access_token = json.body.access_token;
+                        refresh_token = json.body.refresh_token; // As cookie?
+
+                        call_refresh_api(access_token);
 
                         // login was successful, go to dashboard
                         let success_node = document.createElement('div');
@@ -85,6 +89,21 @@ async function call_login_api(username, password) {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(user)
+    });
+
+    return await response.json();
+}
+
+async function call_refresh_api(access_token) {
+    'use strict';
+
+
+    let response = await fetch('/api/refresh', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        }
     });
 
     return await response.json();
