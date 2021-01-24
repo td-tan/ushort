@@ -154,7 +154,7 @@ function show_dashboard(access_token) {
                 $("#context-menu").removeClass("show").hide();
             });
 
-            $("#context-menu a").on("click", function() {
+            $("#context-menu button").on("click", function() {
                 $(this).parent().removeClass("show").hide();
             });
 
@@ -189,6 +189,10 @@ function show_dashboard(access_token) {
         tr.addEventListener('contextmenu', function(e) {
             e.preventDefault();
 
+            // TODO Refactor this
+            var top = e.pageY - 10;
+            var left = e.pageX - 90;
+
             $("#context-menu").css({
                 display: "block",
                 top: top,
@@ -199,7 +203,8 @@ function show_dashboard(access_token) {
             $("#context-menu").removeClass("show").hide();
         });
 
-        $("#context-menu a").on("click", function() {
+        $("#context-menu button").on("click", function(e) {
+            console.log(e);
             $(this).parent().removeClass("show").hide();
         });
 
