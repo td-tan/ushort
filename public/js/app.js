@@ -88,6 +88,7 @@ window.addEventListener('load', function () {
 });
 
 
+
 function show_dashboard(access_token) {
     const dashboard = document.getElementById('dashboard');
     const tbody = document.getElementById('ltable');
@@ -172,6 +173,8 @@ function show_dashboard(access_token) {
         });
     });
 
+    let targetContext;
+
     document.getElementById('create').addEventListener('click', function create() {
         // TODO Create new short link
         const tr = document.createElement('tr');
@@ -188,6 +191,7 @@ function show_dashboard(access_token) {
 
         tr.addEventListener('contextmenu', function(e) {
             e.preventDefault();
+            targetContext = e.target;
 
             // TODO Refactor this
             var top = e.pageY - 10;
@@ -198,17 +202,24 @@ function show_dashboard(access_token) {
                 top: top,
                 left: left
             }).addClass("show");
+
         });
         $("body").on("click", function() {
             $("#context-menu").removeClass("show").hide();
         });
 
-        $("#context-menu button").on("click", function(e) {
-            console.log(e);
-            $(this).parent().removeClass("show").hide();
-        });
 
         tbody.appendChild(tr);
+    });
+
+    $("#context-menu button").on("click", function(e) {
+        if(e.target.textContent === 'Save') {
+            console.log(targetContext);
+        }
+        else if(e.target.textContent === 'Delete') {
+            console.log(targetContext);
+        }
+        $(this).parent().removeClass("show").hide();
     });
 }
 
