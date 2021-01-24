@@ -84,13 +84,29 @@ window.addEventListener('load', function () {
 });
 
 function show_dashboard(access_token) {
+    const dashboard = document.getElementById('dashboard');
+    const tbody = document.getElementById('ltable');
+
     // Hide login panel
     document.getElementById('login').setAttribute('hidden', '');
 
+    document.getElementById('logoutBtn').addEventListener('click', function logout() {
+        call_logout_api(access_token).then( json => {
+            if(json.message === 'success') {
+                // Show login panel
+                document.getElementById('login').removeAttribute('hidden');
+                // Delete old data
+                while(tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                }
+                // Hide dashboard
+                dashboard.setAttribute('hidden', '');
+            }
+        }).catch(error => console.log(error));
+    })
+
     // Create dashboard for user
     const user_info = call_user_api(access_token);
-    const dashboard = document.getElementById('dashboard');
-    const tbody = document.getElementById('ltable');
     const spinner = document.getElementById('data-loading');
     spinner.removeAttribute('hidden');
 
@@ -110,7 +126,8 @@ function show_dashboard(access_token) {
             tbody.appendChild(tr);
         });
         spinner.setAttribute('hidden', '');
-    });
+    }).catch(error => console.log(error));
+
     dashboard.removeAttribute('hidden');
     // Simple filter function w3school
     $("#search").on("keyup", function() {
@@ -177,6 +194,21 @@ async function call_user_api(access_token) {
 
     let response = await fetch('/api/user', {
         method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        }
+    });
+
+    return await response.json();
+}
+
+async function call_logout_api(access_token) {
+    'use strict';
+
+
+    let response = await fetch('/api/logout', {
+        method: 'POST',
         headers: {
             'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json;charset=utf-8'
