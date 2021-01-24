@@ -184,6 +184,9 @@ function show_dashboard(access_token) {
 
         td0.setAttribute('contenteditable', '');
         td1.setAttribute('contenteditable', '');
+        
+        td0.setAttribute('class', 'link');
+        td1.setAttribute('class', 'short');
 
         tr.appendChild(td0);
         tr.appendChild(td1);
@@ -214,7 +217,31 @@ function show_dashboard(access_token) {
 
     $("#context-menu button").on("click", function(e) {
         if(e.target.textContent === 'Save') {
-            console.log(targetContext);
+            let link = '', short = '';
+
+            // Get data of clicked row
+            if(targetContext.className === 'link') {
+                link = targetContext.firstChild.data;
+                short = targetContext.nextSibling.firstChild.data;
+            }
+            else if (targetContext.className === 'short') {
+                link = targetContext.previousSibling.firstChild.data;
+                short = targetContext.firstChild.data;
+            }
+            else {
+                link = targetContext.previousSibling.previousSibling.firstChild.data;
+                short = targetContext.previousSibling.firstChild.data;
+            }
+
+            data = {
+                link: link,
+                short: short
+            }
+            
+            call_create_link_api(access_token, data)
+                .then(response => response.json())
+                .then(json => console.log(json))
+                .catch(error => console.log(error));
         }
         else if(e.target.textContent === 'Delete') {
             console.log(targetContext);
@@ -281,6 +308,21 @@ async function call_logout_api(access_token) {
             'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json;charset=utf-8'
         }
+    });
+
+    return await response.json();
+}
+
+async function call_create_link_api(access_token, data) {
+    'use strict';
+
+    let response = await fetch('/api/create-link', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(data)
     });
 
     return await response.json();
