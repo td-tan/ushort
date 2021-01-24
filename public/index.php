@@ -52,6 +52,8 @@ if (preg_match('/\.(?:css|js|png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"]))
     return false;
 }
 
+// TODO Logout
+
 Route::Get('/', HomeController::class.'@index');
 Route::Get('/{id}', HomeController::class.'@short');
 
@@ -59,6 +61,7 @@ Route::Group('/api', function () {
     Route::Post('/login', ApiController::class.'@login');
     Route::Get('/user', ApiController::class.'@get_user');
     Route::Post('/refresh', ApiController::class.'@refresh_token');
+    Route::Post('/logout', ApiController::class.'@logout');
 });
 
 // To render view

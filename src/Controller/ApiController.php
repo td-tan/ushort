@@ -215,7 +215,7 @@ class ApiController
         // TODO Check if refresh expired
         // TODO Invalidate refresh_token on logout
 
-        if(empty($token) || date("Y-m-d H:i:s", strtotime($token->expire_at)) < date("Y-m-d H:i:s"))
+        if($token->count() < 1 || date("Y-m-d H:i:s", strtotime($token->expire_at)) < date("Y-m-d H:i:s"))
         {
             return json_encode(Utils::error_message('Invalid refresh token.'));
         }
@@ -274,7 +274,27 @@ class ApiController
 
     public function logout(RequestData $rd) : string
     {
+        $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
+        if($vresult['message'] === 'failure')
+        {
+            return json_encode($vresult);
+        }
+        $jwt = $vresult['jwt'];
 
+        $token = Token::query()->where('user_id', '=', (int)$jwt->sub);
+
+        if($token->count() < 1)
+        {
+            return json_encode(Utils::error_message('User does not exist.'));
+        }
+
+        $token->delete();
+
+        $response = [
+            'message' => 'success'
+        ];
+
+        return json_encode($response);
 
     }
 }
