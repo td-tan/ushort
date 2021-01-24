@@ -215,7 +215,7 @@ class ApiController
         // TODO Check if refresh expired
         // TODO Invalidate refresh_token on logout
 
-        if($token->count() < 1 || date("Y-m-d H:i:s", strtotime($token->expire_at)) < date("Y-m-d H:i:s"))
+        if(empty($token) || date("Y-m-d H:i:s", strtotime($token->expire_at)) < date("Y-m-d H:i:s"))
         {
             return json_encode(Utils::error_message('Invalid refresh token.'));
         }
