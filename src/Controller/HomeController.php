@@ -14,13 +14,13 @@ class HomeController
 
     public function short(RequestData $rd) : string
     {
-        $links = Link::query()->where('short', '=', $rd->query['id']);
-        if(empty($links))
+        $link = Link::query()->where('short', '=', $rd->query['id'])->first();
+        if(empty($link))
         {
             return '';
         }
 
-        $link = $links->first()->link;
-        return header("Location: $link");
+        header("Location: $link->link"); // TODO Validate link
+        return '';
     }
 }
