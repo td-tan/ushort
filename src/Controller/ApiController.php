@@ -8,7 +8,6 @@ use App\Helper\Utils;
 use App\Helper\RequestData;
 use App\Model\Token;
 use Exception;
-
 class ApiController
 {
     public function login(RequestData $rd) : string
@@ -106,7 +105,8 @@ class ApiController
     {
         // TODO Refactor jwt verification logic
         header('Content-Type: application/json');
-        // TODO Implement user data api
+    
+        /*
         if(!isset($_SERVER['HTTP_AUTHORIZATION']))
         {
             return json_encode(Utils::error_message('No Authorization header.'));
@@ -133,7 +133,14 @@ class ApiController
         catch (Exception $ex)
         {
             return json_encode(Utils::error_message('Invalid access token: '.$ex->getMessage()));
+        }*/
+
+        $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
+        if($vresult['message'] === 'failure')
+        {
+            return json_encode($vresult);
         }
+        $jwt = $vresult['jwt'];
 
         // Green light for user
         $user = User::query()->find((int)$jwt->sub);
@@ -263,5 +270,11 @@ class ApiController
         ];
 
         return json_encode($response);
+    }
+
+    public function logout(RequestData $rd) : string
+    {
+
+
     }
 }
