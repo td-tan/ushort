@@ -84,6 +84,8 @@ window.addEventListener('load', function () {
 });
 
 function show_dashboard(access_token) {
+    // Hide login panel
+    document.getElementById('login').setAttribute('hidden', '');
 
     // Create dashboard for user
     const user_info = call_user_api(access_token);
