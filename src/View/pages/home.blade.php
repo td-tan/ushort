@@ -58,6 +58,11 @@
         </div>
     </div>
     <button id="create" type="button" class="mt-3 btn btn-primary btn-lg btn-block">Create new short link</button>
+    <div class="dropdown-menu dropdown-menu-sm" id="context-menu">
+        <button class="dropdown-item" href="#">Delete</button>
+        <button class="dropdown-item" href="#">Save</button>
+        <button class="dropdown-item" href="#">Edit</button>
+    </div>
 </div>
 @endsection
 

@@ -137,6 +137,26 @@ function show_dashboard(access_token) {
             tr.appendChild(td0);
             tr.appendChild(td1);
             tr.appendChild(td2);
+
+            tr.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+
+                var top = e.pageY - 10;
+                var left = e.pageX - 90;
+                $("#context-menu").css({
+                    display: "block",
+                    top: top,
+                    left: left
+                }).addClass("show");
+            })
+            $("body").on("click", function() {
+                $("#context-menu").removeClass("show").hide();
+            });
+
+            $("#context-menu a").on("click", function() {
+                $(this).parent().removeClass("show").hide();
+            });
+
             tbody.appendChild(tr);
         });
         spinner.setAttribute('hidden', '');
