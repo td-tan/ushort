@@ -30,7 +30,7 @@
 </div>
 
 <div id="dashboard" class="container" hidden>
-    <h2>Dashboard, Welcome <button id="logoutBtn" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-log-out"></span> Log out</button></h2>
+    <h2>Dashboard, Welcome <a id="user" class="text-primary"></a> <button id="logoutBtn" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-log-out"></span> Log out</button></h2>
     <p>Filter:</p>  
     <input class="form-control" id="search" type="text" placeholder="Search..">
     <br>

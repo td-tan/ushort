@@ -112,10 +112,14 @@ function show_dashboard(access_token) {
 
     // Create dashboard for user
     const user_info = call_user_api(access_token);
+
     const spinner = document.getElementById('data-loading');
     spinner.removeAttribute('hidden');
 
     user_info.then( json => {
+        // Show user email on welcome message
+        document.getElementById('user').textContent = json.body.user;
+
         json.body.links.forEach(element => {
             const tr = document.createElement('tr');
             const td0 = document.createElement('td');
