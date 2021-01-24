@@ -50,7 +50,7 @@ final class Migration extends AbstractMigration
               ->addColumn('link', 'string', array('null' => false))
               ->addColumn('short', 'string', array('null' => false)) // short link
               ->addColumn('deleted', 'boolean', array('null' => false, 'default' => false)) // for soft delete
-              ->addIndex(array('user_id', 'link'), array('unique' => true))
+              ->addIndex(array('user_id', 'short'), array('unique' => true))
               ->addForeignKey('user_id', 'users')
               ->addTimestamps()
               ->create();
