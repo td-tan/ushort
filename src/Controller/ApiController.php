@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use App\Model\User;
 use App\Helper\Utils;
 use App\Helper\RequestData;
+use App\Model\Link;
 use App\Model\Token;
 use Exception;
 class ApiController
@@ -297,5 +298,28 @@ class ApiController
 
         return json_encode($response);
 
+    }
+
+    public function create_link(RequestData $rd) : string
+    {
+        if(!isset($rd->body['link'], $rd->body['short']))
+        {
+            return Utils::error_message('No link or short.');
+        }
+        $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
+        if($vresult['message'] === 'failure')
+        {
+            return json_encode($vresult);
+        }
+        $jwt = $vresult['jwt'];
+
+        $user = User::query()->find((int)$jwt->sub);
+
+        $link = new Link();
+        $link->link = $rd->body['link'];
+        $link->short = $rd->body['short'];
+
+        $user->links()->save($link);
+        return '';
     }
 }
