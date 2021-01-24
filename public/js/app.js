@@ -95,7 +95,10 @@ function show_dashboard(access_token) {
     // Hide login panel
     document.getElementById('login').setAttribute('hidden', '');
 
-    document.getElementById('logoutBtn').addEventListener('click', function logout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', function logout() {
+        // Show spinner loading
+        logoutBtn.children[0].removeAttribute('hidden');
         call_logout_api(access_token).then( json => {
             if(json.message === 'success') {
                 // Show login panel
@@ -106,6 +109,8 @@ function show_dashboard(access_token) {
                 }
                 // Hide dashboard
                 dashboard.setAttribute('hidden', '');
+                // Hide spinner loading again
+                logoutBtn.children[0].setAttribute('hidden', '');
             }
         }).catch(error => console.log(error));
     })
