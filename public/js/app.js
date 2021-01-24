@@ -5,14 +5,18 @@ window.addEventListener('load', function () {
 
     var access_token;
     var refresh_token;
+    var first_time = true;
 
-    // Silent refresh
-    call_refresh_api().then(json => {
+    // Silent refresh on first load
+    setInterval(call_refresh_api().then(json => {
         if(json.message === 'success') {
             access_token = json.body.access_token;
-            show_dashboard(access_token);
+            if(first_time) {
+                show_dashboard(access_token);
+                first_time = false;
+            }
         }
-    });
+    }), 1000*30*60); // Every 30 minutes check on refresh
 
     // Get the forms we want to add validation styles to
     var forms = document.getElementsByClassName('needs-validation');
@@ -82,6 +86,7 @@ window.addEventListener('load', function () {
 
     console.log(access_token);
 });
+
 
 function show_dashboard(access_token) {
     const dashboard = document.getElementById('dashboard');
