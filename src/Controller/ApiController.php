@@ -304,7 +304,7 @@ class ApiController
     {
         if(!isset($rd->body['link'], $rd->body['short']))
         {
-            return Utils::error_message('No link or short.');
+            return json_encode(Utils::error_message('No link or short.'));
         }
         $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
         if($vresult['message'] === 'failure')
@@ -319,7 +319,14 @@ class ApiController
         $link->link = $rd->body['link'];
         $link->short = $rd->body['short'];
 
-        $user->links()->save($link);
+        try 
+        {
+            $user->links()->save($link);
+        } 
+        catch (Exception $ex) 
+        {
+            return json_encode(Utils::error_message('Cannot create link.'));
+        }
         return '';
     }
 }
