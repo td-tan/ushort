@@ -90,6 +90,9 @@ window.addEventListener('load', function () {
 
 
 function show_dashboard(access_token) {
+    let targetContext; // For context button targeting row
+
+
     const dashboard = document.getElementById('dashboard');
     const tbody = document.getElementById('ltable');
 
@@ -131,6 +134,11 @@ function show_dashboard(access_token) {
             const td0 = document.createElement('td');
             const td1 = document.createElement('td');
             const td2 = document.createElement('td');
+
+
+            td0.setAttribute('class', 'link');
+            td1.setAttribute('class', 'short');
+
             td0.textContent = element.link;
             td1.textContent = element.redirect;
             td2.textContent = element.created;
@@ -142,6 +150,7 @@ function show_dashboard(access_token) {
             // Table row contextmenu
             tr.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
+                targetContext = e.target;
 
                 var top = e.pageY - 10;
                 var left = e.pageX - 90;
@@ -151,13 +160,14 @@ function show_dashboard(access_token) {
                     left: left
                 }).addClass("show");
             });
+            
             $("body").on("click", function() {
                 $("#context-menu").removeClass("show").hide();
             });
-
+            /*
             $("#context-menu button").on("click", function() {
                 $(this).parent().removeClass("show").hide();
-            });
+            });*/
 
             tbody.appendChild(tr);
         });
@@ -172,8 +182,6 @@ function show_dashboard(access_token) {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
-
-    let targetContext;
 
     document.getElementById('create').addEventListener('click', function create() {
         // TODO Create new short link
@@ -223,21 +231,30 @@ function show_dashboard(access_token) {
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
                 short = targetContext.nextSibling.firstChild.data;
+
+                targetContext.removeAttribute('class');
+                targetContext.nextSibling.removeAttribute('class');
             }
             else if (targetContext.className === 'short') {
                 link = targetContext.previousSibling.firstChild.data;
                 short = targetContext.firstChild.data;
+
+                targetContext.removeAttribute('class');
+                targetContext.nextSibling.removeAttribute('class');
             }
             else {
                 link = targetContext.previousSibling.previousSibling.firstChild.data;
                 short = targetContext.previousSibling.firstChild.data;
+
+                targetContext.previousSibling.previousSibling.removeAttribute('class');
+                targetContext.previousSibling.removeAttribute('class');
             }
 
             data = {
                 link: link,
                 short: short
             }
-            
+
             call_create_link_api(access_token, data)
                 .then(response => response.json())
                 .then(json => console.log(json))
