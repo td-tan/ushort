@@ -58,6 +58,7 @@ class Route
         require_once(__DIR__."/../Controller/$ctrlName.php");
 
         print call_user_func_array([$ctrlObj, $actionName], [$rd]);
+        exit();
     }
 
     public static function mapping(string $verb, string $route)
