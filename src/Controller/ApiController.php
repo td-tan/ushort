@@ -160,6 +160,7 @@ class ApiController
         $response = [
             'message' => 'success',
             'body' => [
+                'user' => $user->email,
                 'links' => $links
             ]
         ];
