@@ -7,6 +7,15 @@ My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jque
 2. Compose up with docker-compose.yml
 3. Set webserver in public dir
 
+# Demo
+
+![Login](demo/ushort-demo0.gif)
+
+![Edit-Save-Try short link](demo/ushort-demo1.gif)
+
+![Create new short link](demo/ushort-demo3.gif)
+
+![Delete short link](demo/ushort-demo4.gif)
 
 # LICENSE
 MIT License
