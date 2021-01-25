@@ -227,34 +227,37 @@ function show_dashboard(access_token) {
         if(e.target.textContent === 'Save') {
             let link = '', short = '', created = '', oldShort = '';
 
+            if(!targetContext.hasAttribute('contenteditable')) {
+                return;
+            }
             // TODO Refactor link short class btn
             // Get data of clicked row
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
                 short = targetContext.nextSibling.firstChild.data;
-                oldShort = targetContext.nextSibling.lastChild.data;
+                oldShort = targetContext.nextSibling.lastChild.textContent;
                 created = targetContext.nextSibling.nextSibling.firstChild.data;
 
-                targetContext.removeAttribute('class');
-                targetContext.nextSibling.removeAttribute('class');
+                targetContext.removeAttribute('contenteditable');
+                targetContext.nextSibling.removeAttribute('contenteditable');
             }
             else if (targetContext.className === 'short') {
                 link = targetContext.previousSibling.firstChild.data;
                 short = targetContext.firstChild.data;
-                oldShort = targetContext.lastChild.data;
+                oldShort = targetContext.lastChild.textContent;
                 created = targetContext.nextSibling.firstChild.data;
 
-                targetContext.removeAttribute('class');
-                targetContext.nextSibling.removeAttribute('class');
+                targetContext.removeAttribute('contenteditable');
+                targetContext.previousSibling.removeAttribute('contenteditable');
             }
             else {
                 link = targetContext.previousSibling.previousSibling.firstChild.data;
                 short = targetContext.previousSibling.firstChild.data;
-                oldShort = targetContext.previousSibling.lastChild.data;
+                oldShort = targetContext.previousSibling.lastChild.textContent;
                 created = targetContext.firstChild.data;
 
-                targetContext.previousSibling.previousSibling.removeAttribute('class');
-                targetContext.previousSibling.removeAttribute('class');
+                targetContext.previousSibling.previousSibling.removeAttribute('contenteditable');
+                targetContext.previousSibling.removeAttribute('contenteditable');
             }
 
             // TODO Check Created
@@ -293,6 +296,9 @@ function show_dashboard(access_token) {
                 targetContext.setAttribute('class', 'link');
                 targetContext.nextSibling.setAttribute('class', 'short');
 
+                if (targetContext.nextSibling.lastChild === 'old') {
+                    targetContext.nextSibling.lastChild.remove();
+                }
                 let oldShort = document.createElement('td');
                 oldShort.textContent = targetContext.nextSibling.firstChild.data;
                 oldShort.setAttribute('class', 'old');
@@ -301,10 +307,14 @@ function show_dashboard(access_token) {
             }
             else if (targetContext.className === 'short') {
                 targetContext.setAttribute('contenteditable', '');
-                targetContext.nextSibling.setAttribute('contenteditable', '');
+                targetContext.previousSibling.setAttribute('contenteditable', '');
 
                 targetContext.setAttribute('class', 'short');
-                targetContext.nextSibling.setAttribute('class', 'link');
+                targetContext.previousSibling.setAttribute('class', 'link');
+
+                if (targetContext.lastChild.className === 'old') {
+                    targetContext.lastChild.remove();
+                }
 
                 let oldShort = document.createElement('td');
                 oldShort.textContent = targetContext.firstChild.data;
@@ -318,6 +328,10 @@ function show_dashboard(access_token) {
 
                 targetContext.previousSibling.previousSibling.setAttribute('class', 'link');
                 targetContext.previousSibling.setAttribute('class', 'short');
+
+                if (targetContext.previousSibling.lastChild === 'old') {
+                    targetContext.previousSibling.lastChild.remove();
+                }
 
                 let oldShort = document.createElement('td');
                 oldShort.textContent = targetContext.previousSibling.firstChild.data;
