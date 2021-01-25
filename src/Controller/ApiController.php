@@ -333,8 +333,53 @@ class ApiController
         } 
         catch (Exception $ex) 
         {
-            return json_encode(Utils::error_message('Cannot create link.'));
+            return json_encode(Utils::error_message('Cannot create short.'));
         }
-        return '';
+
+        $response = [
+            'message' => 'success'
+        ];
+
+        return json_encode($response);
+    }
+
+    public function modify_short(RequestData $rd) : string
+    {
+        if(!isset($rd->body['old_short'], $rd->body['short']))
+        {
+            return json_encode(Utils::error_message('No short.'));
+        }
+        $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
+        if($vresult['message'] === 'failure')
+        {
+            return json_encode($vresult);
+        }
+        $jwt = $vresult['jwt'];
+
+        $user = User::query()->find((int)$jwt->sub);
+
+        // Check if short already exists and if the user created it
+        $link = Link::query()->where('short', '=', $rd->body['old_short']);
+        $newlink = Link::query()->where('short', '=', $rd->body['short']);
+        if($newlink->count() > 0 && !$link->first()->user->isSame($user)) 
+        {
+            return json_encode(Utils::error_message('Short already exist.'));
+        }
+
+        if($link->count() < 1)
+        {
+            return json_encode(Utils::error_message('Short not found.'));
+        }
+
+        $link = $link->first();
+        $link->short = $rd->body['short'];
+        // TODO try catch
+        $link->save();
+
+        $response = [
+            'message' => 'success'
+        ];
+
+        return json_encode($response);
     }
 }
