@@ -1,5 +1,5 @@
 # ushort
-My simple frameworkless URL shortener in PHP with vanilla JS for SPA
+My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jquery for SPA
 
 
 # LICENSE
