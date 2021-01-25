@@ -356,4 +356,38 @@ class ApiController
 
         return json_encode($response);
     }
+
+    public function delete_short(RequestData $rd) : string
+    {
+        if(!isset($rd->query['id']))
+        {
+            return json_encode(Utils::error_message('No short.'));
+        }
+        $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
+        if($vresult['message'] === 'failure')
+        {
+            return json_encode($vresult);
+        }
+        $jwt = $vresult['jwt'];
+
+        $user = User::query()->find((int)$jwt->sub);
+
+        // Check if short already exists and if the user created it
+        $link = Link::query()->where('short', '=', $rd->query['id']);
+
+        if($link->count() < 1 && !$link->first()->user->isSame($user)) 
+        {
+            return json_encode(Utils::error_message('Short does not exists or unauthorized.'));
+        }
+        $link = $link->first();
+        $link->deleted = true;
+        $link->save();
+
+
+        $response = [
+            'message' => 'success'
+        ];
+
+        return json_encode($response);
+    }
 }
