@@ -160,7 +160,7 @@ function show_dashboard(access_token) {
                     left: left
                 }).addClass("show");
             });
-            
+
             $("body").on("click", function() {
                 $("#context-menu").removeClass("show").hide();
             });
@@ -227,6 +227,7 @@ function show_dashboard(access_token) {
         if(e.target.textContent === 'Save') {
             let link = '', short = '';
 
+            // TODO Refactor link short class btn
             // Get data of clicked row
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
@@ -262,6 +263,21 @@ function show_dashboard(access_token) {
         }
         else if(e.target.textContent === 'Delete') {
             console.log(targetContext);
+        }
+        else if(e.target.textContent === 'Edit') {
+            // Get data of clicked row
+            if(targetContext.className === 'link') {
+                targetContext.setAttribute('contenteditable', '');
+                targetContext.nextSibling.setAttribute('contenteditable', '');
+            }
+            else if (targetContext.className === 'short') {
+                targetContext.setAttribute('contenteditable', '');
+                targetContext.nextSibling.setAttribute('contenteditable', '');
+            }
+            else {
+                targetContext.previousSibling.previousSibling.setAttribute('contenteditable', '');
+                targetContext.previousSibling.setAttribute('contenteditable', '');
+            }
         }
         $(this).parent().removeClass("show").hide();
     });
