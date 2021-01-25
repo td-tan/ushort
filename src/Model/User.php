@@ -21,4 +21,12 @@ class User extends Model
     {
         return $this->hasOne(Token::class);
     }
+
+    /**
+     * Compare User
+     */
+    public function isSame(User $user)
+    {
+        return $this->id == $user->id;
+    }
 }
