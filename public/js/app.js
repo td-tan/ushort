@@ -250,7 +250,24 @@ function show_dashboard(access_token) {
             }
         }
         else if(e.target.textContent === 'Delete') {
-            console.log(targetContext);
+            let short = '';
+            if(targetContext.className === 'link') {
+                short = targetContext.nextSibling.firstChild.data;
+            }
+            else if (targetContext.className === 'short') {
+                short = targetContext.firstChild.data;
+            }
+            else {
+                short = targetContext.previousSibling.firstChild.data;
+            }
+
+            call_delete_short_api(access_token, short)
+            .then(json => {
+                if (json.message === 'success') {
+                    display_user_slinks(access_token, tbody);
+                }
+            })
+            .catch(error => console.log(error));
         }
         else if(e.target.textContent === 'Edit') {
             // Get data of clicked row
@@ -458,6 +475,20 @@ async function call_modify_short_api(access_token, data) {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(data)
+    });
+
+    return await response.json();
+}
+
+async function call_delete_short_api(access_token, short) {
+    'use strict';
+
+    let response = await fetch(`/api/${short}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        }
     });
 
     return await response.json();
