@@ -20,7 +20,9 @@ class HomeController
             return '';
         }
 
-        header("Location: $link->link"); // TODO Validate link
+        $validated_url = filter_var($link->link, FILTER_VALIDATE_URL);
+        $clean_url = filter_var($validated_url, FILTER_SANITIZE_URL);
+        header("Location: $clean_url"); // TODO Validate link
         return '';
     }
 }
