@@ -315,9 +315,17 @@ class ApiController
 
         $user = User::query()->find((int)$jwt->sub);
 
+        // Check if short already exists and if the user created it
+        $link = Link::query()->where('short', '=', $rd->body['short']);
+        if($link->count() > 0 && !$link->first()->user->isSame($user)) 
+        {
+            return json_encode(Utils::error_message('Short already exist.'));
+        }
+
         $link = new Link();
         $link->link = $rd->body['link'];
         $link->short = $rd->body['short'];
+
 
         try 
         {
