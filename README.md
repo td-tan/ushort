@@ -1,5 +1,11 @@
 # ushort
-My simple frameworkless URL shortener in PHP with vanilla JS for SPA
+My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jquery for SPA
+
+# How to setup
+
+1. Install required php packages with composer (composer.json)
+2. Compose up with docker-compose.yml
+3. Set webserver in public dir
 
 
 # LICENSE
