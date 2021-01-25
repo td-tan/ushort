@@ -179,6 +179,7 @@ function show_dashboard(access_token) {
                 return;
             }
             // TODO Refactor link short class btn
+            // TODO Refactor THIS!
             // Get data of clicked row
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
@@ -186,7 +187,9 @@ function show_dashboard(access_token) {
                 if(targetContext.nextSibling.lastChild) {
                     oldShort = targetContext.nextSibling.lastChild.textContent;
                 }
-                created = targetContext.nextSibling.nextSibling.firstChild.data;
+                if(targetContext.nextSibling.nextSibling.firstChild) {
+                    created = targetContext.nextSibling.nextSibling.firstChild.data;
+                }
 
                 targetContext.removeAttribute('contenteditable');
                 targetContext.nextSibling.removeAttribute('contenteditable');
@@ -197,8 +200,9 @@ function show_dashboard(access_token) {
                 if(targetContext.nextSibling.firstChild) {
                     oldShort = targetContext.lastChild.textContent;
                 }
-                created = targetContext.nextSibling.firstChild.data;
-
+                if(targetContext.nextSibling.firstChild) {
+                    created = targetContext.nextSibling.firstChild.data;
+                }
                 targetContext.removeAttribute('contenteditable');
                 targetContext.previousSibling.removeAttribute('contenteditable');
             }
@@ -208,8 +212,9 @@ function show_dashboard(access_token) {
                 if (targetContext.previousSibling.lastChild) {
                     oldShort = targetContext.previousSibling.lastChild.textContent;
                 }
-                created = targetContext.firstChild.data;
-
+                if(targetContext.firstChild) {
+                    created = targetContext.firstChild.data;
+                }
                 targetContext.previousSibling.previousSibling.removeAttribute('contenteditable');
                 targetContext.previousSibling.removeAttribute('contenteditable');
             }
