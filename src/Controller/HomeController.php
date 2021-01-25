@@ -15,7 +15,7 @@ class HomeController
     public function short(RequestData $rd) : string
     {
         $link = Link::query()->where('short', '=', $rd->query['id'])->first();
-        if(empty($link))
+        if(empty($link) || $link->deleted)
         {
             return '';
         }
