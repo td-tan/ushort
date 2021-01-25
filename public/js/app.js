@@ -225,13 +225,14 @@ function show_dashboard(access_token) {
 
     $("#context-menu button").on("click", function(e) {
         if(e.target.textContent === 'Save') {
-            let link = '', short = '';
+            let link = '', short = '', created = '';
 
             // TODO Refactor link short class btn
             // Get data of clicked row
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
                 short = targetContext.nextSibling.firstChild.data;
+                created = targetContext.nextSibling.nextSibling.firstChild.data;
 
                 targetContext.removeAttribute('class');
                 targetContext.nextSibling.removeAttribute('class');
@@ -239,6 +240,7 @@ function show_dashboard(access_token) {
             else if (targetContext.className === 'short') {
                 link = targetContext.previousSibling.firstChild.data;
                 short = targetContext.firstChild.data;
+                created = targetContext.nextSibling.firstChild.data;
 
                 targetContext.removeAttribute('class');
                 targetContext.nextSibling.removeAttribute('class');
@@ -246,20 +248,35 @@ function show_dashboard(access_token) {
             else {
                 link = targetContext.previousSibling.previousSibling.firstChild.data;
                 short = targetContext.previousSibling.firstChild.data;
+                created = targetContext.firstChild.data;
 
                 targetContext.previousSibling.previousSibling.removeAttribute('class');
                 targetContext.previousSibling.removeAttribute('class');
             }
 
-            data = {
-                link: link,
-                short: short
-            }
+            // TODO Check Created
+            if(created.length  > 0) {
+                // TODO Modify short
+                data = {
+                    short: short
+                }
 
-            call_create_link_api(access_token, data)
-                .then(response => response.json())
-                .then(json => console.log(json))
-                .catch(error => console.log(error));
+                call_modify_short_api(access_token, data)
+                    .then(response => response.json())
+                    .then(json => console.log(json))
+                    .catch(error => console.log(error));
+            }
+            else {
+                data = {
+                    link: link,
+                    short: short
+                }
+
+                call_create_link_api(access_token, data)
+                    .then(response => response.json())
+                    .then(json => console.log(json))
+                    .catch(error => console.log(error));
+            }
         }
         else if(e.target.textContent === 'Delete') {
             console.log(targetContext);
@@ -272,6 +289,12 @@ function show_dashboard(access_token) {
 
                 targetContext.setAttribute('class', 'link');
                 targetContext.nextSibling.setAttribute('class', 'short');
+
+                let oldShort = document.createElement('td');
+                oldShort.textContent = targetContext.nextSibling.firstChild.data;
+                oldShort.setAttribute('class', 'old');
+                oldShort.setAttribute('hidden', '');
+                targetContext.nextSibling.appendChild(oldShort);
             }
             else if (targetContext.className === 'short') {
                 targetContext.setAttribute('contenteditable', '');
@@ -279,6 +302,12 @@ function show_dashboard(access_token) {
 
                 targetContext.setAttribute('class', 'short');
                 targetContext.nextSibling.setAttribute('class', 'link');
+
+                let oldShort = document.createElement('td');
+                oldShort.textContent = targetContext.firstChild.data;
+                oldShort.setAttribute('class', 'old');
+                oldShort.setAttribute('hidden', '');
+                targetContext.nextSibling.appendChild(oldShort);
             }
             else {
                 targetContext.previousSibling.previousSibling.setAttribute('contenteditable', '');
@@ -286,6 +315,12 @@ function show_dashboard(access_token) {
 
                 targetContext.previousSibling.previousSibling.setAttribute('class', 'link');
                 targetContext.previousSibling.setAttribute('class', 'short');
+
+                let oldShort = document.createElement('td');
+                oldShort.textContent = targetContext.previousSibling.firstChild.data;
+                oldShort.setAttribute('class', 'old');
+                oldShort.setAttribute('hidden', '');
+                targetContext.nextSibling.appendChild(oldShort);
             }
         }
         $(this).parent().removeClass("show").hide();
@@ -360,6 +395,21 @@ async function call_create_link_api(access_token, data) {
 
     let response = await fetch('/api/create-link', {
         method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(data)
+    });
+
+    return await response.json();
+}
+
+async function call_modify_short_api(access_token, data) {
+    'use strict';
+
+    let response = await fetch('/api/modify-short', {
+        method: 'PUT',
         headers: {
             'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json;charset=utf-8'
