@@ -4,9 +4,10 @@ My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jque
 # How to setup
 
 1. Install required php packages with composer (composer.json)
-2. Compose up with docker-compose.yml
-3. Migrate db with phinx
-4. Set webserver in public dir
+2. Configure environment variables in .env and in phinx.php
+3. Compose up with docker-compose.yml
+4. Migrate db with phinx
+5. Set webserver in public dir
 
 # Demo
 
