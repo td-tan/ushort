@@ -62,6 +62,9 @@ Route::Group('/api', function () {
     Route::Get('/user', ApiController::class.'@get_user');
     Route::Post('/refresh', ApiController::class.'@refresh_token');
     Route::Post('/logout', ApiController::class.'@logout');
+    Route::Post('/create-link', ApiController::class.'@create_link');
+    Route::Put('/modify-short', ApiController::class.'@modify_short');
+    Route::Delete('/{id}', ApiController::class.'@delete_short');
 });
 
 // To render view
