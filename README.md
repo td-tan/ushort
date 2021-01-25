@@ -9,12 +9,16 @@ My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jque
 
 # Demo
 
+## Let's log into it:
 ![Login](demo/ushort-demo0.gif)
 
+## Edit a short link and save it:
 ![Edit-Save-Try short link](demo/ushort-demo1.gif)
 
+## Have fun creating new short links:
 ![Create new short link](demo/ushort-demo3.gif)
 
+## Or delete them (soft delete):
 ![Delete short link](demo/ushort-demo4.gif)
 
 # LICENSE
