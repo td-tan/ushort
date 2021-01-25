@@ -183,7 +183,9 @@ function show_dashboard(access_token) {
             if(targetContext.className === 'link') {
                 link = targetContext.firstChild.data;
                 short = targetContext.nextSibling.firstChild.data;
-                oldShort = targetContext.nextSibling.lastChild.textContent;
+                if(targetContext.nextSibling.lastChild) {
+                    oldShort = targetContext.nextSibling.lastChild.textContent;
+                }
                 created = targetContext.nextSibling.nextSibling.firstChild.data;
 
                 targetContext.removeAttribute('contenteditable');
@@ -192,7 +194,9 @@ function show_dashboard(access_token) {
             else if (targetContext.className === 'short') {
                 link = targetContext.previousSibling.firstChild.data;
                 short = targetContext.firstChild.data;
-                oldShort = targetContext.lastChild.textContent;
+                if(targetContext.nextSibling.firstChild) {
+                    oldShort = targetContext.lastChild.textContent;
+                }
                 created = targetContext.nextSibling.firstChild.data;
 
                 targetContext.removeAttribute('contenteditable');
@@ -201,7 +205,9 @@ function show_dashboard(access_token) {
             else {
                 link = targetContext.previousSibling.previousSibling.firstChild.data;
                 short = targetContext.previousSibling.firstChild.data;
-                oldShort = targetContext.previousSibling.lastChild.textContent;
+                if (targetContext.previousSibling.lastChild) {
+                    oldShort = targetContext.previousSibling.lastChild.textContent;
+                }
                 created = targetContext.firstChild.data;
 
                 targetContext.previousSibling.previousSibling.removeAttribute('contenteditable');
