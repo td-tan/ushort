@@ -106,35 +106,6 @@ class ApiController
     {
         // TODO Refactor jwt verification logic
         header('Content-Type: application/json');
-    
-        /*
-        if(!isset($_SERVER['HTTP_AUTHORIZATION']))
-        {
-            return json_encode(Utils::error_message('No Authorization header.'));
-        }
-        $auth_header_values = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
-
-        if($auth_header_values < 2)
-        {
-            return json_encode(Utils::error_message('No access token.'));
-        }
-
-        if($auth_header_values[0] !== 'Bearer')
-        {
-            return json_encode(Utils::error_message('Invalid Authorization header.'));
-        }
-
-        $access_token = $auth_header_values[1];
-
-        // Verify access token
-        try 
-        {
-            $jwt = JWT::decode($access_token, $_ENV['APP_KEY'], ['HS256']);
-        } 
-        catch (Exception $ex)
-        {
-            return json_encode(Utils::error_message('Invalid access token: '.$ex->getMessage()));
-        }*/
 
         $vresult = Utils::verify_atoken($_SERVER['HTTP_AUTHORIZATION']);
         if($vresult['message'] === 'failure')
@@ -147,10 +118,13 @@ class ApiController
         $user = User::query()->find((int)$jwt->sub);
         $user_links = $user->links()->get();
 
-        // Kovert to clean response
+        // Konvert to clean response
         $links = array();
         foreach($user_links as $link)
         {
+            // We want only not soft_deleted data
+            if($link->deleted) continue;
+
             $links[] = array(
                 'link' => $link->link,
                 'redirect' => $link->short,
