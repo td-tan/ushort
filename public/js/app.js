@@ -87,10 +87,9 @@ window.addEventListener('load', function () {
     console.log(access_token);
 });
 
-
+let targetContext; // For context button targeting row
 
 function show_dashboard(access_token) {
-    let targetContext; // For context button targeting row
 
 
     const dashboard = document.getElementById('dashboard');
@@ -120,59 +119,8 @@ function show_dashboard(access_token) {
     })
 
     // Create dashboard for user
-    const user_info = call_user_api(access_token);
-
-    const spinner = document.getElementById('data-loading');
-    spinner.removeAttribute('hidden');
-
-    user_info.then( json => {
-        // Show user email on welcome message
-        document.getElementById('user').textContent = json.body.user;
-
-        json.body.links.forEach(element => {
-            const tr = document.createElement('tr');
-            const td0 = document.createElement('td');
-            const td1 = document.createElement('td');
-            const td2 = document.createElement('td');
-
-
-            td0.setAttribute('class', 'link');
-            td1.setAttribute('class', 'short');
-
-            td0.textContent = element.link;
-            td1.textContent = element.redirect;
-            td2.textContent = element.created;
-
-            tr.appendChild(td0);
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-
-            // Table row contextmenu
-            tr.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                targetContext = e.target;
-
-                var top = e.pageY - 10;
-                var left = e.pageX - 90;
-                $("#context-menu").css({
-                    display: "block",
-                    top: top,
-                    left: left
-                }).addClass("show");
-            });
-
-            $("body").on("click", function() {
-                $("#context-menu").removeClass("show").hide();
-            });
-            /*
-            $("#context-menu button").on("click", function() {
-                $(this).parent().removeClass("show").hide();
-            });*/
-
-            tbody.appendChild(tr);
-        });
-        spinner.setAttribute('hidden', '');
-    }).catch(error => console.log(error));
+    display_user_slinks(access_token, tbody);
+    
 
     dashboard.removeAttribute('hidden');
     // Simple filter function w3school
@@ -270,7 +218,10 @@ function show_dashboard(access_token) {
                 }
 
                 call_modify_short_api(access_token, data)
-                    .then(json => console.log(json))
+                    .then(json => {
+                        // TODO load new data
+                        display_user_slinks(access_token, tbody);
+                    })
                     .catch(error => console.log(error));
             }
             else {
@@ -280,7 +231,10 @@ function show_dashboard(access_token) {
                 }
 
                 call_create_link_api(access_token, data)
-                    .then(json => console.log(json))
+                    .then(json => {
+                        // TODO load new data
+                        display_user_slinks(access_token, tbody);
+                    })
                     .catch(error => console.log(error));
             }
         }
@@ -342,6 +296,67 @@ function show_dashboard(access_token) {
         }
         $(this).parent().removeClass("show").hide();
     });
+}
+
+function display_user_slinks(access_token, tbody) {
+
+    while(tbody.firstChild) {
+        tbody.firstChild.remove();
+    }
+
+    const user_info = call_user_api(access_token);
+
+    const spinner = document.getElementById('data-loading');
+    spinner.removeAttribute('hidden');
+
+    user_info.then( json => {
+        // Show user email on welcome message
+        document.getElementById('user').textContent = json.body.user;
+
+        json.body.links.forEach(element => {
+            const tr = document.createElement('tr');
+            const td0 = document.createElement('td');
+            const td1 = document.createElement('td');
+            const td2 = document.createElement('td');
+
+
+            td0.setAttribute('class', 'link');
+            td1.setAttribute('class', 'short');
+
+            td0.textContent = element.link;
+            td1.textContent = element.redirect;
+            td2.textContent = element.created;
+
+            tr.appendChild(td0);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+
+            // Table row contextmenu
+            tr.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                targetContext = e.target;
+
+                var top = e.pageY - 10;
+                var left = e.pageX - 90;
+                $("#context-menu").css({
+                    display: "block",
+                    top: top,
+                    left: left
+                }).addClass("show");
+            });
+
+            $("body").on("click", function() {
+                $("#context-menu").removeClass("show").hide();
+            });
+            /*
+            $("#context-menu button").on("click", function() {
+                $(this).parent().removeClass("show").hide();
+            });*/
+
+            tbody.appendChild(tr);
+        });
+        spinner.setAttribute('hidden', '');
+    }).catch(error => console.log(error));
 }
 
 async function call_login_api(username, password) {
