@@ -269,14 +269,23 @@ function show_dashboard(access_token) {
             if(targetContext.className === 'link') {
                 targetContext.setAttribute('contenteditable', '');
                 targetContext.nextSibling.setAttribute('contenteditable', '');
+
+                targetContext.setAttribute('class', 'link');
+                targetContext.nextSibling.setAttribute('class', 'short');
             }
             else if (targetContext.className === 'short') {
                 targetContext.setAttribute('contenteditable', '');
                 targetContext.nextSibling.setAttribute('contenteditable', '');
+
+                targetContext.setAttribute('class', 'short');
+                targetContext.nextSibling.setAttribute('class', 'link');
             }
             else {
                 targetContext.previousSibling.previousSibling.setAttribute('contenteditable', '');
                 targetContext.previousSibling.setAttribute('contenteditable', '');
+
+                targetContext.previousSibling.previousSibling.setAttribute('class', 'link');
+                targetContext.previousSibling.setAttribute('class', 'short');
             }
         }
         $(this).parent().removeClass("show").hide();
