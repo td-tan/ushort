@@ -13,5 +13,15 @@
         "symfony/dotenv": "^5.2.1",
         "eftec/bladeone": "^3.49.1",
         "firebase/php-jwt": "^5.2.0"
+    },
+    "scripts": {
+        "test:coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --color=always --coverage-clover=\"html/code-coverage/clover.xml\""
+          ],
+        "test:coverage-html": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --color=always --coverage-html=\"html/code-coverage\""
+        ]
     }
 }
