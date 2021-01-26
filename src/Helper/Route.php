@@ -11,6 +11,7 @@ class Route
 {
 
     static string $route = "";
+    static string $controller_path = __DIR__."/../Controller/";
 
     public static function match(string $route, string $url) : ?array
     {
@@ -55,7 +56,7 @@ class Route
         $ctrlName = end($namespace);
 
 
-        require_once(__DIR__."/../Controller/$ctrlName.php");
+        require_once(self::$controller_path."$ctrlName.php");
 
         print call_user_func_array([$ctrlObj, $actionName], [$rd]);
         exit();
