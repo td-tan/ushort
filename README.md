@@ -9,6 +9,11 @@ My simple frameworkless URL shortener in PHP with vanilla JS + a sprinkle $ jque
 4. Migrate db with phinx
 5. Set webserver in public dir
 
+# Entity-Relationship Diagram
+
+![Entity-Relationship Diagram](/docs/erd.png))
+# App workflow
+
 # Demo
 
 ## Let's log into it:
