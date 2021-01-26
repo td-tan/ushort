@@ -88,5 +88,72 @@ final class RouteTest extends TestCase
 
         self::assertIsArray(Route::match('/[0-9]+/[a-z]+/[0-9]+/[a-z]+', '/123/abcde/456789/fghijklmn'));
     }
+
+    public function testCannotMapRoute() : void
+    {
+        // Test invalid request method
+        $_SERVER['REQUEST_METHOD'] = '';
+        self::assertFalse(Route::mapping('GET', '/'));
+        self::assertFalse(Route::mapping('POST', '/'));
+        self::assertFalse(Route::mapping('PUT', '/'));
+        self::assertFalse(Route::mapping('DELETE', '/'));
+
+        // Test with valid request method but invalid uri
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '';
+        self::assertFalse(Route::mapping('GET', '/'));
+        // Test valid uri
+        $_SERVER['REQUEST_URI'] = '/';
+        self::assertFalse(Route::mapping('POST', '/'));
+        self::assertFalse(Route::mapping('PUT', '/'));
+        self::assertFalse(Route::mapping('DELETE', '/'));
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = '';
+        self::assertFalse(Route::mapping('POST', '/'));
+
+        $_SERVER['REQUEST_METHOD'] = 'PUT';
+        $_SERVER['REQUEST_URI'] = '';
+        self::assertFalse(Route::mapping('PUT', '/'));
+
+        $_SERVER['REQUEST_METHOD'] = 'DELETE';
+        $_SERVER['REQUEST_URI'] = '';
+        self::assertFalse(Route::mapping('DELETE', '/'));
+    }
+
+    public function testCanMapRoute(): void
+    {
+        // Test valid request method & uri path
+        $_SERVER['REQUEST_URI'] = '/';
+        foreach (['GET', 'POST', 'PUT', 'DELETE'] as $method) { 
+            $_SERVER['REQUEST_METHOD'] = $method;
+            $result = Route::mapping($method, '/');
+            self::assertIsArray($result);
+            // Array empty no query param
+            self::assertEquals($result, []);
+        }
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        self::assertIsArray(Route::mapping('GET', '/'));
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        self::assertIsArray(Route::mapping('POST', '/'));
+        $_SERVER['REQUEST_METHOD'] = 'PUT';
+        self::assertIsArray(Route::mapping('PUT', '/'));
+        $_SERVER['REQUEST_METHOD'] = 'DELETE';
+        self::assertIsArray(Route::mapping('DELETE', '/'));
+
+
+        // Test valid method & path with query params
+        $_SERVER['REQUEST_URI'] = '/123';
+        foreach (['GET', 'POST', 'PUT', 'DELETE'] as $method) { 
+            $_SERVER['REQUEST_METHOD'] = $method;
+            $result = Route::mapping($method, '/{id}');
+            self::assertIsArray($result);
+            // Array empty no query param
+            self::assertEquals($result, ['id' => '123']);
+        }
+
+        
+    }
 }
 
