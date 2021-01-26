@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 final class RouteTest extends TestCase
 {
 
+    /**
+     * @covers \App\Controller\Route::match
+     */
     public function testCannotMatchStaticRoute(): void
     {
         // Fail Matches return null for Route::match
@@ -24,6 +27,9 @@ final class RouteTest extends TestCase
         
     }
 
+    /**
+     * @covers \App\Controller\Route::match
+     */
     public function testCanMatchStaticRoute(): void
     {
         // Good Matches return [] for Route::match
@@ -42,6 +48,9 @@ final class RouteTest extends TestCase
         self::assertIsArray(Route::match('/admin/admin/admin', '/admin/admin/admin'));
     }
 
+    /**
+     * @covers \App\Controller\Route::match
+     */
     public function testCannotMatchDynamicRoute(): void
     {
         // Rules declared {} for dynamic match
@@ -78,6 +87,9 @@ final class RouteTest extends TestCase
         self::assertNull(Route::match('/[0-9]/[a-z]', '/a'));
     }
 
+    /**
+     * @covers \App\Controller\Route::match
+     */
     public function testCanMatchDynamicRoute(): void
     {
         self::assertIsArray(Route::match('/{id}', '/123'));
@@ -92,6 +104,10 @@ final class RouteTest extends TestCase
         self::assertIsArray(Route::match('/[0-9]+/[a-z]+/[0-9]+/[a-z]+', '/123/abcde/456789/fghijklmn'));
     }
 
+    /**
+     * @covers \App\Controller\Route::mapping
+     * @covers \App\Controller\Route::match
+     */
     public function testCannotMapRoute() : void
     {
         // Test invalid request method
@@ -124,6 +140,10 @@ final class RouteTest extends TestCase
         self::assertFalse(Route::mapping('DELETE', '/'));
     }
 
+    /**
+     * @covers \App\Controller\Route::mapping
+     * @covers \App\Controller\Route::match
+     */
     public function testCanMapRoute(): void
     {
         // Test valid request method & uri path
@@ -159,6 +179,9 @@ final class RouteTest extends TestCase
         
     }
 
+    /**
+     * @covers \App\Controller\Route::loadController
+     */
     public function testCannotLoadController() : void
     {
         // Controller not found
@@ -170,6 +193,9 @@ final class RouteTest extends TestCase
         self::assertFalse(Route::loadController("HomeController@action_does_not_exists", new RequestData()));
     }
 
+    /**
+     * @covers \App\Controller\Route::loadController
+     */
     public function testCanLoadController() : void
     {
         $_ENV['DEBUG'] = true;
@@ -178,6 +204,16 @@ final class RouteTest extends TestCase
         self::assertTrue(Route::loadController(App\Controller\HomeController::class."@index", new RequestData()));
     }
 
+
+    /**
+     * @covers \App\Controller\Route::mapping
+     * @covers \App\Controller\Route::match
+     * @covers \App\Controller\Route::loadController
+     * @covers \App\Controller\Route::Get
+     * @covers \App\Controller\Route::Post
+     * @covers \App\Controller\Route::Put
+     * @covers \App\Controller\Route::Delete
+     */
     public function testRoute() : void
     {
         $_ENV['DEBUG'] = true;
