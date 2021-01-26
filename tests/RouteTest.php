@@ -204,6 +204,34 @@ final class RouteTest extends TestCase
         self::assertTrue(Route::loadController(App\Controller\HomeController::class."@index", new RequestData()));
     }
 
+    /**
+     * @covers \App\Controller\Route::mapping
+     * @covers \App\Controller\Route::match
+     * @covers \App\Controller\Route::loadController
+     * @covers \App\Controller\Route::Get
+     * @covers \App\Controller\Route::Post
+     * @covers \App\Controller\Route::Put
+     * @covers \App\Controller\Route::Delete
+     */
+    public function testCannotMatchRoute() : void
+    {
+        $_ENV['DEBUG'] = true;
+        $_SERVER['REQUEST_URI'] = '/home';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        Route::$controller_path = __DIR__."/../../src/Controller/";
+
+        self::assertFalse(Route::Get('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        self::assertFalse(Route::Post('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'PUT';
+        self::assertFalse(Route::Put('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'DELETE';
+        self::assertFalse(Route::Delete('/', App\Controller\HomeController::class."@index"));
+    }
+
 
     /**
      * @covers \App\Controller\Route::mapping
@@ -214,7 +242,7 @@ final class RouteTest extends TestCase
      * @covers \App\Controller\Route::Put
      * @covers \App\Controller\Route::Delete
      */
-    public function testRoute() : void
+    public function testCanMatchRoute() : void
     {
         $_ENV['DEBUG'] = true;
         $_SERVER['REQUEST_URI'] = '/';
@@ -231,6 +259,26 @@ final class RouteTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'DELETE';
         self::assertTrue(Route::Delete('/', App\Controller\HomeController::class."@index"));
+    }
+
+    /**
+     * @covers \App\Controller\Route::mapping
+     * @covers \App\Controller\Route::match
+     * @covers \App\Controller\Route::loadController
+     * @covers \App\Controller\Route::Get
+     * @covers \App\Controller\Route::Post
+     * @covers \App\Controller\Route::Put
+     * @covers \App\Controller\Route::Delete
+     * @covers \App\Controller\Route::Group
+     */
+    public function testGroupRoute() : void
+    {
+        $_ENV['DEBUG'] = true;
+        $_SERVER['REQUEST_URI'] = '/test/test2';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        Route::Group('/test', function () {
+            self::assertTrue(Route::Get('/test2', App\Controller\HomeController::class."@index"));
+        });
     }
 }
 
