@@ -1,10 +1,13 @@
 <?php declare(strict_types=1);
 
+use App\Helper\RequestData;
 use App\Helper\Route;
+
 use PHPUnit\Framework\TestCase;
 
 final class RouteTest extends TestCase
 {
+
     public function testCannotMatchStaticRoute(): void
     {
         // Fail Matches return null for Route::match
@@ -155,5 +158,28 @@ final class RouteTest extends TestCase
 
         
     }
+
+    public function testCannotLoadController() : void
+    {
+        // Controller not found
+        Route::$controller_path = __DIR__."/";
+        self::assertFalse(Route::loadController("ControllerDoesNotExists@action", new RequestData()));
+
+        // Action not found
+        Route::$controller_path = __DIR__."/../Controller/";
+        self::assertFalse(Route::loadController("HomeController@action_does_not_exists", new RequestData()));
+    }
+
+    public function testCanLoadController() : void
+    {
+        $_ENV['DEBUG'] = true;
+        // Controller & action found
+        Route::$controller_path = __DIR__."/../../src/Controller/";
+        self::assertTrue(Route::loadController(App\Controller\HomeController::class."@index", new RequestData()));
+    }
 }
 
+// Mocking global view function
+function view(string $viewname, array $viewargs) {
+    return "";
+}
