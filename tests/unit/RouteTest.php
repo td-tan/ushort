@@ -34,6 +34,9 @@ final class RouteTest extends TestCase
         // Level 2 path
         self::assertIsArray(Route::match('/user/dashboard', '/user/dashboard'));
         self::assertIsArray(Route::match('/admin/dashboard', '/admin/dashboard'));
+        // Level 3 path
+        self::assertIsArray(Route::match('/user/user/user', '/user/user/user'));
+        self::assertIsArray(Route::match('/admin/admin/admin', '/admin/admin/admin'));
     }
 }
 
