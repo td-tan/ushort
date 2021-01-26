@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Controller\HomeController;
 use App\Helper\RequestData;
 use App\Helper\Route;
 
@@ -176,6 +177,25 @@ final class RouteTest extends TestCase
         // Controller & action found
         Route::$controller_path = __DIR__."/../../src/Controller/";
         self::assertTrue(Route::loadController(App\Controller\HomeController::class."@index", new RequestData()));
+    }
+
+    public function testRoute() : void
+    {
+        $_ENV['DEBUG'] = true;
+        $_SERVER['REQUEST_URI'] = '/';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        Route::$controller_path = __DIR__."/../../src/Controller/";
+
+        self::assertTrue(Route::Get('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        self::assertTrue(Route::Post('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'PUT';
+        self::assertTrue(Route::Put('/', App\Controller\HomeController::class."@index"));
+
+        $_SERVER['REQUEST_METHOD'] = 'DELETE';
+        self::assertTrue(Route::Delete('/', App\Controller\HomeController::class."@index"));
     }
 }
 
