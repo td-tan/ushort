@@ -14,7 +14,7 @@ class Route
 
     public static function match(string $route, string $url) : ?array
     {
-        $url = parse_url($_SERVER['REQUEST_URI']);
+        $url = parse_url($url);
         $path = $url['path'];
 
         $param_rule = "/\{(?'param'\w+)(?'rules'=\w+?\|?\w+)?\}/";
