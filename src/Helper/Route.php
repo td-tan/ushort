@@ -49,16 +49,24 @@ class Route
         $ctrlName = $ctrl[0];
         $actionName = $ctrl[1];
 
-        $ctrlObj = new $ctrlName;
+        $ctrlObj = $ctrlName;
 
         // Remove namespace from Controller Name
         $namespace = explode('\\', $ctrlName);
         $ctrlName = end($namespace);
 
+        $ctrlPath = self::$controller_path."$ctrlName.php";
+
+        if(!file_exists($ctrlPath))
+        {
+            exit();
+        }
+        
+
 
         require_once(self::$controller_path."$ctrlName.php");
 
-        print call_user_func_array([$ctrlObj, $actionName], [$rd]);
+        print call_user_func_array([new $ctrlObj, $actionName], [$rd]);
         exit();
     }
 
