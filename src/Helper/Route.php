@@ -42,7 +42,7 @@ class Route
         return array($param => $matches[$param]); // We only want Get parameter
     }
 
-    public static function loadController(string $controller, RequestData $rd) : void
+    public static function loadController(string $controller, RequestData $rd) : bool
     {
         // Get Controllers for mapping to action name
         $ctrl = explode('@', $controller);
@@ -59,7 +59,7 @@ class Route
 
         if(!file_exists($ctrlPath))
         {
-            exit();
+            return False;
         }
         
 
@@ -67,7 +67,12 @@ class Route
         require_once(self::$controller_path."$ctrlName.php");
 
         print call_user_func_array([new $ctrlObj, $actionName], [$rd]);
-        exit();
+
+        if(!$_ENV['DEBUG'])
+        {
+            exit();
+        }
+        return True;
     }
 
     public static function mapping(string $verb, string $route)
