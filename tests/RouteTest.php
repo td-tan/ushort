@@ -200,7 +200,7 @@ final class RouteTest extends TestCase
     {
         $_ENV['DEBUG'] = true;
         // Controller & action found
-        Route::$controller_path = __DIR__."/../../src/Controller/";
+        Route::$controller_path = __DIR__."/../src/Controller/";
         self::assertTrue(Route::loadController(App\Controller\HomeController::class."@index", new RequestData()));
     }
 
