@@ -16,6 +16,17 @@ final class HomeControllerTest extends TestCase
 
         self::assertEquals("pages.home:", $homeCtrl->index(new RequestData(['test' => '123'])));
     }
+
+    /**
+     * @covers App\Controller\HomeController
+     */
+    public function testShort() : void
+    {
+        $homeCtrl = new HomeController();
+        self::assertEquals("", $homeCtrl->short(new RequestData()));
+
+        self::assertEquals("123", $homeCtrl->short(new RequestData(['id' => '123'])));
+    }
 }
 
 function view(string $viewname, array $viewargs) {
