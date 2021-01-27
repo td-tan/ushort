@@ -286,8 +286,3 @@ final class RouteTest extends TestCase
         });
     }
 }
-
-// Mocking global view function
-function view(string $viewname, array $viewargs) {
-    return "";
-}
