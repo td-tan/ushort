@@ -22,6 +22,11 @@ class HomeController
 
         $validated_url = filter_var($link->link, FILTER_VALIDATE_URL);
         $clean_url = filter_var($validated_url, FILTER_SANITIZE_URL);
+        if ($_ENV['DEBUG'])
+        {
+            return json_encode($rd->query);
+        }
+        
         header("Location: $clean_url"); // TODO Validate link
         return '';
     }
