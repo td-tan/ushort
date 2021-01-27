@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Helper\RequestData;
 use App\Model\Link;
+use App\Helper\Utils;
 
 class HomeController
 {
@@ -14,6 +15,11 @@ class HomeController
 
     public function short(RequestData $rd) : string
     {
+        if(isset($rd->query['id']))
+        {
+            return json_encode(Utils::error_message('Short does not exist.'));
+        }
+
         $link = Link::query()->where('short', '=', $rd->query['id'])->first();
         if(empty($link) || $link->deleted)
         {
