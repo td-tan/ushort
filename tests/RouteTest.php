@@ -188,9 +188,14 @@ final class RouteTest extends TestCase
         Route::$controller_path = __DIR__."/";
         self::assertFalse(Route::loadController("ControllerDoesNotExists@action", new RequestData()));
 
-        // Action not found
+        // Controller not found
         Route::$controller_path = __DIR__."/../Controller/";
         self::assertFalse(Route::loadController("HomeController@action_does_not_exists", new RequestData()));
+
+        // Action not found
+        Route::$controller_path = __DIR__."/../src/Controller/";
+        $this->expectException(TypeError::class);
+        self::assertFalse(Route::loadController("App\Controller\HomeController@action_does_not_exists", new RequestData()));
     }
 
     /**
